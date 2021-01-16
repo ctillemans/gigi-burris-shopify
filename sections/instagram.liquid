@@ -1,0 +1,157 @@
+{% case section.settings.colors %}
+  {% when 'white' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--white">
+  {% when 'light' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--light">
+  {% when 'accent' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--accent">
+  {% when 'dark' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--dark">
+{% endcase %}
+
+<div class="homepage-instagram-background homepage-indiv-section-wrapper">
+
+<div class="{% if section.settings.instagram-homepage-width == 'fixed' %}wrapper {% endif %}main-content" role="main">
+
+	<div class="instagram-wrapper show-on-scroll" data-id="{{ section.id }}">
+    <div class="sitewide--title-wrapper">
+			<h2 class="homepage-sections--title">{{ section.settings.title | escape }}</h2>
+		</div>
+
+{% capture instagram_placeholder %}
+<div class="grid__item instagram-grid-{{ section.settings.grid }} homepage-instagram-indiv">
+  {{ 'image' | placeholder_svg_tag: 'icon icon--placeholder' }}
+  <div class="homepage-instagram-hover">
+    <span class="fa-stack fa-2x">
+      <i class="fa fa-circle fa-stack-2x fa-inverse"></i>
+      <i class="fa fa-instagram fa-stack-1x"></i>
+    </span>
+  </div>
+</div>
+{% endcapture %}
+
+{% if section.settings.instagram-access-token != empty %}
+		<input type="hidden" id="token-{{ section.id }}" value="{{ section.settings.instagram-access-token | escape }}" />
+    <script type="text/html" id="instagram-placeholder">
+      {{ instagram_placeholder }}
+    </script>
+
+		<div id="instafeed-{{ section.id }}" class="grid--full grid-uniform"
+			data-grid="{{ section.settings.grid }}"
+			data-rows="{{ section.settings.rows }}"
+			data-grid-width="instagram-grid-{{ section.settings.grid }}">
+    </div>
+{% else %}
+		<div id="instafeed-{{ section.id }}" class="grid--full">
+      {% capture total_images %}{{ section.settings.grid | times: section.settings.rows }}{% endcapture %}
+			{% for i in (1..total_images) %}{{ instagram_placeholder }}{% endfor %}
+		</div>
+{% endif %}
+
+{% if section.settings.show_instagram_button %}
+  {% if settings.sm_instagram_link != empty %}
+  	<div class="homepage-instagram-link-btn-wrapper">
+  		<a href="{{ settings.sm_instagram_link }}" target="_blank" class="homepage-instagram-link-btn">{{ 'homepage.sections.instagram_follow_us' | t }}</a>
+  	</div>
+  {% endif %}
+{% endif %}
+
+
+		</div>
+	</div>
+</div>
+
+</div>
+
+{% assign instaimage = '{{image}}' %}
+{% assign instaurl = '{{link}}' %}
+
+{% schema %}
+{
+  "name": "Instagram",
+  "class": "instagram-section-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "colors",
+      "label": "Color scheme",
+      "default": "light",
+      "options": [
+        {
+          "value": "white",
+          "label": "Minimal"
+        },
+        {
+          "value": "light",
+          "label": "Light"
+        },
+        {
+          "value": "accent",
+          "label": "Feature"
+        },
+        {
+          "value": "dark",
+          "label": "Dark"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Instagram"
+    },
+    {
+      "type": "text",
+      "id": "instagram-access-token",
+      "label": "Access token [(?)](http:\/\/www.wetheme.com\/instagram-integration\/)"
+    },
+		{
+			"type": "select",
+			"id": "instagram-homepage-width",
+			"label": "Width",
+			"options": [
+				{
+					"value": "fixed",
+					"label": "Fixed"
+				},
+				{
+					"value": "full-width",
+					"label": "Full width"
+				}
+			],
+			"default": "full-width"
+		},
+    {
+      "type": "checkbox",
+      "id": "show_instagram_button",
+      "label": "'Follow us' button",
+      "info": "Your Instagram profile URL must be set in General settings"
+    },
+    {
+      "type": "range",
+      "id": "grid",
+      "min": 4,
+      "max": 6,
+      "step": 1,
+      "label": "Images per row",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "rows",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Rows",
+      "default": 1
+    }
+  ],
+  "presets": [
+    {
+      "name": "Instagram",
+      "category": "Social media"
+    }
+  ]
+}
+{% endschema %}

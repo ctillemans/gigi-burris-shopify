@@ -1,0 +1,254 @@
+<div class="collection-main-body">
+
+{% if section.settings.banner_image %}
+  <div class="list-collections--banner-image">
+    <img src="{{ section.settings.banner_image | img_url: '2000x' }}" alt="{{ collection.title }}" />
+  </div>
+{% endif %}
+
+{% if section.settings.show_title %}
+  <div class="sitewide--title-wrapper">
+    <h2 class="homepage-sections--title">{{ 'collections.general.product_collections' | t }}</h2>
+  </div>
+{% endif %}
+
+{% case section.settings.items_per_row %}
+  {% when 2 %}
+  	{% capture grid_item_width %}large--one-half medium--one-half small--one-half{% endcapture %}
+  {% when 3 %}
+  	{% capture grid_item_width %}large--one-third medium--one-half small--one-whole{% endcapture %}
+  {% when 4 %}
+  	{% capture grid_item_width %}large--one-quarter medium--one-half small--one-half{% endcapture %}
+  {% when 5 %}
+    {% capture grid_item_width %}large--one-fifth medium--one-half small--one-half{% endcapture %}
+{% endcase %}
+
+{% case section.settings.layout %}
+
+  {% when 'preview' %}
+
+    {% if section.settings.show_options != 'selected' %}
+
+      {% for collection in collections %}
+
+        {% unless collection.handle == 'frontpage' or collection.products.size == 0 %}
+
+          {% capture collection_title %}{{ collection.title | escape }}{% endcapture %}
+
+          <div class="section-header">
+            <h2 class="list-collections--title">{{ collection_title }}</h2>
+          </div>
+
+          <div class="grid-uniform collection-main-body-inner{% if section.settings.match-height %} products--match-height{% endif %}">
+            {% for product in collection.products limit:section.settings.items_per_row %}
+              {% include 'product-grid-item' %}
+            {% endfor %}
+          </div>
+
+          <div class="list-collections--more-link">
+            <a href="{{ collection.url }}" title="{{ 'collections.general.link_title' | t: title: collection_title }}">{{ 'collections.general.see_more' | t }} {{ collection_title }} &rsaquo;</a>
+          </div>
+
+          {% unless forloop.last %}<hr>{% endunless %}
+
+        {% endunless %}
+
+      {% endfor %}
+
+    {% else %}
+
+      {% for block in section.blocks %}
+
+        {%- assign collection = collections[block.settings.collection] -%}
+
+        {% capture collection_title %}{{ collection.title | escape }}{% endcapture %}
+
+        <div class="section-header">
+          <h2 class="list-collections--title">{{ collection_title }}</h2>
+        </div>
+
+        <div class="grid-uniform collection-main-body-inner{% if section.settings.match-height %} products--match-height{% endif %}">
+          {% for product in collection.products limit:section.settings.items_per_row %}
+            {% include 'product-grid-item' %}
+          {% else %}
+            {% for i in (1..section.settings.items_per_row) %}
+              <div class="grid__item {{ grid_item_width }}">
+                <div class="grid-view-item">
+                  <a href="/admin/products" class="grid-view-item__link">
+                    <div class="grid-view-item__image">
+                      {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                      {{ 'product-' | append: current | placeholder_svg_tag: 'icon icon--placeholder grid__image' }}
+                    </div>
+                    <div class="grid-view-item--desc-wrapper">
+                        <p class="product-grid--title">{{ 'homepage.onboarding.product_title' | t }}</p>
+                        <p class="product-grid--price"><span class="money">$19.99</span></p>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            {% endfor %}
+          {% endfor %}
+        </div>
+
+        {% if collection.products != empty %}
+        <div class="list-collections--more-link">
+          <a href="{{ collection.url }}" title="{{ 'collections.general.link_title' | t: title: collection_title }}">{{ 'collections.general.see_more' | t }} {{ collection_title }} &rsaquo;</a>
+        </div>
+        {% endif %}
+
+        {% unless forloop.last %}<hr>{% endunless %}
+
+      {% endfor %}
+
+    {% endif %}
+
+  {% when 'grid' %}
+
+  {% if section.settings.show_options != 'selected' %}
+
+    <div class="grid-uniform {% if section.settings.match-height %} products--match-height{% endif %}">
+
+      {% for collection in collections %}
+
+        {% unless collection.handle == 'frontpage' %}
+
+          {% capture collection_title %}{{ collection.title | escape }}{% endcapture %}
+
+          <div class="grid__item {{ grid_item_width }}">
+            <div class="grid-view-item">
+              <a href="{{ collection.url }}" class="grid__image" title="{{ 'collections.general.link_title' | t: title: collection_title }}">
+                <img src="{{ collection.image | img_url: 'large' }}" alt="{{ collection_title }}" class="list-collections--indiv-collection-image" />
+              </a>
+              <h3 class="list-collections--indiv-collection-title">{{ collection_title }}</h3>
+            </div>
+          </div>
+
+        {% endunless %}
+
+      {% endfor %}
+
+    </div>
+
+  {% else %}
+
+    <div class="grid-uniform {% if section.settings.match-height %} products--match-height{% endif %}">
+
+      {% for block in section.blocks %}
+
+        {%- assign collection = collections[block.settings.collection] -%}
+
+        {% capture collection_title %}{{ collection.title | escape }}{% endcapture %}
+
+        <div class="grid__item {{ grid_item_width }}">
+          <div class="grid-view-item">
+            <a href="{{ collection.url }}" class="grid__image" title="{{ 'collections.general.link_title' | t: title: collection_title }}">
+              <img src="{{ collection.image | img_url: 'large' }}" alt="{{ collection_title }}" class="list-collections--indiv-collection-image" />
+            </a>
+            <h3 class="list-collections--indiv-collection-title">{{ collection_title }}</h3>
+          </div>
+        </div>
+
+      {% endfor %}
+
+    </div>
+
+  {% endif %}
+
+{% endcase %}
+
+</div>
+
+{% schema %}
+{
+  "name": "All collections",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "All of your collections are listed by default. To customize your list, choose 'Selected' and add collections."
+    },
+    {
+      "type": "radio",
+      "id": "show_options",
+      "label": "Select collections to show",
+      "default": "all",
+      "options": [
+        {
+          "value": "all",
+          "label": "All"
+        },
+        {
+          "value": "selected",
+          "label": "Selected"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Layout options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show page title",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Banner image"
+    },
+    {
+      "type": "radio",
+      "id": "layout",
+      "label": "Layout style",
+      "default": "preview",
+      "options": [
+        {
+          "value": "preview",
+          "label": "Preview"
+        },
+        {
+          "value": "grid",
+          "label": "Grid"
+        }
+      ]
+    },
+    {
+  		"type": "range",
+  		"id": "items_per_row",
+  		"min": 2,
+  		"max": 5,
+  		"step": 1,
+  		"label": "Items per row",
+  		"default": 4
+  	},
+    {
+      "type": "header",
+      "content": "Auto-height images"
+    },
+    {
+      "type": "paragraph",
+      "content": "Set all of your images to be the same height"
+    },
+    {
+      "type": "checkbox",
+      "id": "match-height",
+      "label": "Enable auto-height",
+      "default": false
+    }
+  ],
+  "blocks": [
+  {
+    "type": "collection",
+    "name": "Collection",
+    "settings": [
+      {
+        "label": "Collection",
+        "id": "collection",
+        "type": "collection"
+      }
+    ]
+  }
+]
+}
+{% endschema %}

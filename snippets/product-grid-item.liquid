@@ -1,0 +1,41 @@
+{% comment %}
+  Set the default grid_item_width if no variable is set
+{% endcomment %}
+{% unless grid_item_width %}
+  {% assign grid_item_width = 'large--one-third medium--one-half' %}
+{% endunless %}
+
+<div class="grid__item {{ grid_item_width }}">
+
+	<div class="grid-view-item">
+
+  {% comment %}
+    Link to your product with the 'within: collection' filter for the link to be aware of the collection.
+    This allows you to create collection-based navigation on the product page.
+
+    Results of using 'within: collection':
+    - Instead of a URL with /products/product-handle
+      you would get /collections/collection-handle/products/product-handle
+
+    For more info on navigation within a collection
+      - http://docs.shopify.com/support/your-store/collections/how-to-navigate-within-a-collection
+
+  {% endcomment %}
+  <a href="{{ product.url | within: collection }}" class="grid__image">
+    {% include 'responsive-image' with product.featured_image, alt: product.featured_image.alt %}
+  </a>
+
+  <p class="h6 product-grid--title">
+    <a href="{{ product.url | within: collection }}">{{ product.title }}</a>
+  </p>
+  <p class="product-grid--price">
+    {% include 'product-grid-item-price' %}
+  </p>
+
+  {% unless product.available %}
+      <div class="sold-out-badge">{{ 'products.product.sold_out' | t }}</div>
+  {% endunless %}
+
+	</div>
+
+</div>

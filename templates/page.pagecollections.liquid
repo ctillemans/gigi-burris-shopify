@@ -1,0 +1,86 @@
+<!-- /templates/page.liquid -->
+
+
+<div class="page-main--wrapper">
+<style>
+#myWorkContent{
+    width:100%;
+    height:510px;
+    border: 5px solid black;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    background-color:black;
+}
+#myWorkContent a {
+    display: inline-block;
+    float:left;
+}
+
+div#insideDiv{
+    width:6000px;
+}
+
+ #disneylk1hover:hover {
+    content: url('https://cdn.shopify.com/s/files/1/0068/4651/3222/files/DISNEYICONHOVER.png?15154372191682173388');height:500px; margin:0px 2.5px 0px 0px ;
+  } 
+  
+  #disneylk2hover:hover {
+    content: url('https://cdn.shopify.com/s/files/1/0068/4651/3222/files/look2button.png?4565407405789951575');height:500px; margin:0px 2.5px 0px 0px ;
+  } 
+  
+  #disneylk3hover:hover {
+    content: url('https://cdn.shopify.com/s/files/1/0068/4651/3222/files/theicon2.png?17794364984757227604'); height:500px; margin:0px 2.5px 0px 2.5px ;
+  } 
+  
+  #disneylk4hover:hover {
+    content: url('https://cdn.shopify.com/s/files/1/0068/4651/3222/files/magicmoment.png?17847720238162525202');height:500px; margin:0px 2.5px 0px 2.5px ;
+  } 
+  
+  #disneylk5hover:hover {
+    content: url('https://cdn.shopify.com/s/files/1/0068/4651/3222/files/tru_original.png?17847720238162525202');height:500px; margin:0px 2.5px 0px 2.5px ;
+  } 
+  
+  #disneylk6hover:hover {
+    content: url('https://cdn.shopify.com/s/files/1/0068/4651/3222/files/1928.png?10660744137137740013');height:500px; margin:0px 0px 0px 2.5px ;
+  } 
+  
+  
+    #disneylk7hover:hover {
+    content: url('https://cdn.shopify.com/s/files/1/0068/4651/3222/files/pearly_girly_rollover_02fdac47-805f-45af-b45e-1cb5a931ba80.png?1937794616473017198');height:500px; margin:0px 0px 0px 2.5px ;
+  } 
+  
+    #disneylk8hover:hover {
+    content: url('https://cdn.shopify.com/s/files/1/0068/4651/3222/files/dotsbrim_rollover_copy.png?1937794616473017198');height:500px; margin:0px 0px 0px 2.5px ;
+  } 
+    .frame::-webkit-scrollbar {
+    -webkit-appearance: none;
+}
+.frame::-webkit-scrollbar:horizontal {
+    height: 11px;
+}
+.frame::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    border: 1px solid white;
+    background-color: rgba(0, 0, 0, .9);
+}
+.frame::-webkit-scrollbar-track { 
+    background-color: #000; 
+    border-radius: 1px; 
+} 
+</style>
+  
+  
+  <div class="100%">
+
+    <div class="sitewide--title-wrapper">
+      <br><br>
+      <h1 class="page--title">{{ page.title }}</h1>
+    </div>
+
+    <div class="rte">
+      {{ page.content }}
+    </div>
+
+  </div>
+
+</div>

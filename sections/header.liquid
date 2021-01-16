@@ -1,0 +1,619 @@
+<div data-section-id="{{ section.id }}" data-section-type="header-section" class="header-section--wrapper{% if section.settings.overlay_header %} overlay-header-wrapper{% endif %}">
+  <div id="NavDrawer" class="drawer drawer--left">
+    <!-- begin mobile-nav -->
+    <ul class="mobile-nav">
+      <li class="mobile-nav__item mobile-nav__search">
+        {% include 'mobile-search-bar' %}
+      </li>
+
+      {% assign menu = linklists[section.settings.main_linklist] %}
+      {% for link in menu.links %}
+      
+      
+
+        {% if link.links != blank %}
+        <li class="mobile-nav__item{% if link.active %} mobile-nav__item--active{% endif %}" aria-haspopup="true">
+          <div class="mobile-nav__has-sublist">
+            <a href="{{ link.url }}" class="mobile-nav__link">{{ link.title }}</a>
+            <div class="mobile-nav__toggle">
+              <button type="button" class="icon-fallback-text mobile-nav__toggle-open">
+                <i class="fa fa-caret-right fa-lg" aria-hidden="true"></i>
+                <span class="fallback-text">{{ 'cart.general.see_more' | t }}</span>
+              </button>
+              <button type="button" class="icon-fallback-text mobile-nav__toggle-close">
+                <i class="fa fa-caret-down fa-lg" aria-hidden="true"></i>
+                <span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>
+              </button>
+            </div>
+          </div>
+          <ul class="mobile-nav__sublist">
+              {% for sub_link in link.links %}
+              {% if sub_link.levels > 0 %}
+              <li class="mobile-nav__item {% if sub_link.active %} mobile-nav__item--active{% endif %}">
+                  <div class="mobile-nav__has-sublist">
+                    <a href="{{ sub_link.url }}" class="mobile-nav__link">{{ sub_link.title | escape }}</a>
+                      <div class="mobile-nav__toggle">
+                        <button type="button" class="icon-fallback-text mobile-nav__toggle-open">
+                          <i class="fa fa-caret-right fa-lg" aria-hidden="true"></i>
+                          <span class="fallback-text">{{ 'cart.general.see_more' | t }}</span>
+                        </button>
+                        <button type="button" class="icon-fallback-text mobile-nav__toggle-close">
+                          <i class="fa fa-caret-down fa-lg" aria-hidden="true"></i>
+                          <span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>
+                        </button>
+                      </div>
+                    </div>
+                    <ul class="mobile-nav__sublist">
+                      {% for sub_sub_link in sub_link.links %}
+                        <li class="mobile-nav__item">
+                          <a href="{{ sub_sub_link.url  }}" class="mobile-nav__link">{{ sub_sub_link.title | escape }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </li>
+                {% else %}
+                  <li class="mobile-nav__item {% if sub_link.active %} mobile-nav__item--active{% endif %}">
+                    <a href="{{ sub_link.url }}" class="mobile-nav__link">{{ sub_link.title | escape }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </li>
+
+          {% else %}
+
+          <li class="mobile-nav__item{% if link.active %} mobile-nav__item--active{% endif %}">
+            <a href="{{ link.url }}" class="mobile-nav__link">{{ link.title }}</a>
+          </li>
+
+        {% endif %}
+
+      {% endfor %}
+      
+    
+      
+      
+
+      {% if settings.show_multiple_currencies %}
+        <li class="mobile-nav__item" aria-haspopup="true">
+          <div class="mobile-nav__has-sublist">
+            <div class="mobile-nav__toggle">
+              <button type="button" class="mobile-nav__toggle-open mobile-menu-currency-button">
+                <span class="text">Currency</span>
+                <span class="icon-fallback-text">
+                  <span class="icon">
+                    <i class="fa fa-caret-right fa-lg" aria-hidden="true"></i>
+                  </span>
+                  <span class="fallback-text">{{ 'cart.general.see_more' | t }}</span>
+                </span>
+              </button>
+              <button type="button" class="mobile-nav__toggle-close mobile-menu-currency-button">
+                <span class="text">Currency</span>
+                <span class="icon-fallback-text">
+                  <span class="icon">
+                    <i class="fa fa-caret-down fa-lg" aria-hidden="true"></i>
+                  </span>
+                  <span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>
+                </span>
+              </button>
+            </div>
+          </div>
+          <ul class="mobile-nav__sublist">
+            {% assign codes = 'USD,EUR,GBP,CAD,ARS,AUD,BBD,BDT,BSD,BHD,BRL,BOB,BND,BGN,ILS,MMK,KYD,CLP,CNY,COP,CRC,HRK,CZK,DKK,DOP,XCD,EGP,XPF,FJD,GHS,GTQ,GYD,GEL,HKD,HUF,ISK,INR,IDR,NIS,JMD,JPY,JOD,KZT,KES,KWD,LVL,LTL,MXN,MYR,MUR,MDL,MAD,MNT,MZN,ANG,NZD,NGN,NOK,OMR,PKR,PYG,PEN,PHP,PLN,QAR,RON,RUB,SAR,RSD,SCR,SGD,SYP,ZAR,KRW,LKR,SEK,CHF,TWD,THB,TZS,TTD,TRY,UAH,AED,UYU,VEB,VND,ZMK' | split: ',' %}
+            {% assign supported_codes = settings.supported_currencies | split: ' ' %}
+            <li class="mobile-nav__item">
+              <a href="#" class="mobile-nav__link mobile-menu-currency-link mobile-menu-currency-selected" data-code="{{ shop.currency }}">{{ shop.currency }}</a>
+            </li>
+            {% for code in supported_codes %}
+              {% if code != shop.currency and codes contains code %}
+                <li class="mobile-nav__item">
+                  <a href="#" class="mobile-nav__link mobile-menu-currency-link" data-code="{{ code }}">{{ code }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </li>
+      {% endif %}
+    </ul>
+
+
+      {% comment %}
+        If customer accounts are enabled, provide login and create account links
+      {% endcomment %}
+      {% if shop.customer_accounts_enabled %}
+
+      <span class="mobile-nav-header">{{ 'layout.customer.account' | t }}</span>
+
+	  <ul class="mobile-nav">
+
+        {% if customer %}
+          <li class="mobile-nav__item">
+            {% if customer.first_name != blank %}
+              {% capture first_name %}{{ customer.first_name }}{% endcapture %}
+              <a href="/account">{{ 'layout.customer.logged_in_as_html' | t: first_name: first_name }}</a>
+            {% else %}
+              <a href="/account">{{ 'layout.customer.account' | t }}</a>
+            {% endif %}
+          </li>
+          <li class="mobile-nav__item">
+            {{ 'layout.customer.log_out' | t | customer_logout_link }}
+          </li>
+        {% else %}
+          <li class="mobile-nav__item">
+            {{ 'layout.customer.log_in' | t | customer_login_link }}
+          </li>
+          <li class="mobile-nav__item">
+            {{ 'layout.customer.create_account' | t | customer_register_link }}
+          </li>
+        {% endif %}
+
+	</ul>
+
+      {% endif %}
+    <!-- //mobile-nav -->
+  </div>
+
+  {% capture header_logo %}
+    {% if template == 'index' %}
+      <h1 class="site-header__logo" id="site-title" itemscope itemtype="http://schema.org/Organization">
+    {% else %}
+      <div class="site-header__logo h1" id="site-title" itemscope itemtype="http://schema.org/Organization">
+    {% endif %}
+
+    {% if section.settings.logo %}
+      <a href="/" itemprop="url" class="site-header__logo-image">
+        {% assign alt = section.settings.logo.alt | default: shop.name %}
+        {% capture props %}
+          style="width: {{ section.settings.logo_max_width | escape }}px"
+          itemprop="logo"
+        {% endcapture %}
+        {% include 'responsive-image' with section.settings.logo, alt: alt, props: props %}
+      </a>
+    {% else %}
+      <a class="site-header__logo-link" href="/" itemprop="url">{{ shop.name }}</a>
+    {% endif %}
+
+    {% if section.settings.overlay_header and template == 'index' %}
+      {% if section.settings.overlay_logo %}
+        {% assign img = section.settings.overlay_logo %}
+      {% elsif section.settings.logo %}
+        {% assign img = section.settings.logo %}
+      {% else %}
+        {% assign img = none %}
+      {% endif %}
+
+      {% if img %}
+        <a href="/" itemprop="url" class="site-header__logo-overlay-image">
+          {% assign alt = section.settings.logo.alt | default: shop.name %}
+          {% capture props %}
+            style="width: {{ section.settings.logo_max_width | escape }}px"
+            itemprop="logo"
+          {% endcapture %}
+          {% include 'responsive-image' with img, alt: alt, props: props %}
+        </a>
+      {% else %}
+        <a class="site-header__logo-overlay-link" href="/" itemprop="url">{{ shop.name }}</a>
+      {% endif %}
+    {% endif %}
+
+    {% if template == 'index' %}
+      </h1>
+    {% else %}
+      </div>
+    {% endif %}
+  {% endcapture %}
+
+    <header class="site-header medium--hide small--hide{% if section.settings.sticky_header %} sticky-header sticky-header-transformed ui sticky{% endif %}{% if section.settings.logo-placement == 'above' %} logo_above{% endif %}{% if section.settings.overlay_header %} overlay-header{% endif %}{% if section.settings.dropdown_alignment == 'center' %} dropdown-alignment--center{% endif %}" style="box-shadow: rgba(0, 0, 0, 0.2) 4px 6px 8px;">
+      <div class="wrapper">
+
+        {% if section.settings.logo-placement == 'left' %}
+
+        <div class="grid--full grid--table">
+          <div class="grid__item large--one-quarter">
+              <div class="site-header__logo large--left" itemscope itemtype="http://schema.org/Organization">
+                {{ header_logo }}
+              </div>
+          </div>
+          <div class="grid__item large--three-quarters large--text-right medium-down--hide">
+
+			<div class="top-links">
+
+				<ul class="site-nav" id="AccessibleNav" role="navigation">
+					{% include 'site-nav' %}
+				</ul>
+
+				<ul class="top-links--icon-links">
+
+					{% if settings.show_multiple_currencies %}
+						<li class="currency-picker--wrapper{% if section.settings.overlay_header %} overlay--currency-wrapper{% endif %}">
+
+							<select class="currency-picker" name="currencies">
+								{% assign codes = 'USD,EUR,GBP,CAD,ARS,AUD,BBD,BDT,BSD,BHD,BRL,BOB,BND,BGN,ILS,MMK,KYD,CLP,CNY,COP,CRC,HRK,CZK,DKK,DOP,XCD,EGP,XPF,FJD,GHS,GTQ,GYD,GEL,HKD,HUF,ISK,INR,IDR,NIS,JMD,JPY,JOD,KZT,KES,KWD,LVL,LTL,MXN,MYR,MUR,MDL,MAD,MNT,MZN,ANG,NZD,NGN,NOK,OMR,PKR,PYG,PEN,PHP,PLN,QAR,RON,RUB,SAR,RSD,SCR,SGD,SYP,ZAR,KRW,LKR,SEK,CHF,TWD,THB,TZS,TTD,TRY,UAH,AED,UYU,VEB,VND,ZMK' | split: ',' %}
+								{% assign supported_codes = settings.supported_currencies | split: ' ' %}
+								<option value="{{ shop.currency }}" selected="selected">{{ shop.currency }}</option>
+								{% for code in supported_codes %}
+									{% if code != shop.currency and codes contains code %}
+										<option value="{{ code }}">{{ code }}</option>
+									{% endif %}
+								{% endfor %}
+							</select>
+
+						</li>
+					{% endif %}
+                    {% if section.settings.enable_search %}
+					<li>
+						<a href="/search" class="search-button">
+							<i class="fa fa-search fa-lg"></i>
+						</a>
+					</li>
+                    {%  endif %}
+
+
+					{% if shop.customer_accounts_enabled %}
+						{% if customer %}
+							<li>
+								<a href="/account" title="{{ 'layout.customer.account' | t }}">
+									<i class="fa fa-user fa-lg"></i>
+								</a>
+							</li>
+						{% else %}
+							<li>
+								<a href="/account/login" title="{{ 'layout.customer.log_in' | t }}" class="log-in-button">
+									<i class="fa fa-user fa-lg"></i>
+								</a>
+							</li>
+						{% endif %}
+					{% endif %}
+
+					<li>
+						<a href="/cart" class="site-header__cart-toggle{% if settings.ajax_cart_method == "drawer" %} js-drawer-open-right-link{% endif %}" aria-controls="CartDrawer" aria-expanded="false">
+							<i class="fa fa-shopping-cart fa-lg"></i>
+              <span class="site-header__cart-indicator {% if cart.item_count == 0 %}hide{% endif %}"></span>
+						</a>
+					</li>
+
+				</ul>
+			</div>
+
+          </div>
+
+      {% endif %}
+
+      {% if section.settings.logo-placement == 'center' %}
+
+      <div class="grid--full grid--table">
+
+        <div class="grid__item large--five-twelfths">
+
+          <div class="top-links">
+
+              <ul class="site-nav" id="AccessibleNav" role="navigation">
+
+                  {% include 'site-nav' %}
+
+              </ul>
+
+          </div>
+
+        </div>
+
+
+        <div class="grid__item large--two-twelfths">
+            <div class="site-header__logo large--center" itemscope itemtype="http://schema.org/Organization">
+              {{ header_logo }}
+            </div>
+        </div>
+        <div class="grid__item large--five-twelfths large--text-right medium-down--hide">
+          {% comment %}
+            Show number of items in the cart and total cost in the /cart link
+
+            Ajax Cart Notes:
+              - #cartCount updates the total number of items in the cart
+              - #cartCost updates the total cost of the cart
+              - Documentation:  http://shopify.com/timber#ajax-cart
+          {% endcomment %}
+    <div class="top-links">
+
+      <ul class="top-links--icon-links">
+
+        {% if settings.show_multiple_currencies %}
+          <li class="currency-picker--wrapper{% if section.settings.overlay_header %} overlay--currency-wrapper{% endif %}">
+
+            <select class="currency-picker" name="currencies">
+              {% assign codes = 'USD,EUR,GBP,CAD,ARS,AUD,BBD,BDT,BSD,BHD,BRL,BOB,BND,BGN,ILS,MMK,KYD,CLP,CNY,COP,CRC,HRK,CZK,DKK,DOP,XCD,EGP,XPF,FJD,GHS,GTQ,GYD,GEL,HKD,HUF,ISK,INR,IDR,NIS,JMD,JPY,JOD,KZT,KES,KWD,LVL,LTL,MXN,MYR,MUR,MDL,MAD,MNT,MZN,ANG,NZD,NGN,NOK,OMR,PKR,PYG,PEN,PHP,PLN,QAR,RON,RUB,SAR,RSD,SCR,SGD,SYP,ZAR,KRW,LKR,SEK,CHF,TWD,THB,TZS,TTD,TRY,UAH,AED,UYU,VEB,VND,ZMK' | split: ',' %}
+              {% assign supported_codes = settings.supported_currencies | split: ' ' %}
+              <option value="{{ shop.currency }}" selected="selected">{{ shop.currency }}</option>
+              {% for code in supported_codes %}
+                {% if code != shop.currency and codes contains code %}
+                  <option value="{{ code }}">{{ code }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+
+          </li>
+        {% endif %}
+
+        {% if section.settings.enable_search %}
+        <li>
+          <a href="/search" class="search-button">
+            <i class="fa fa-search fa-lg"></i>
+          </a>
+        </li>
+        {% endif %}
+
+        {% if shop.customer_accounts_enabled %}
+          {% if customer %}
+            <li>
+              <a href="/account" title="{{ 'layout.customer.account' | t }}">
+                <i class="fa fa-user fa-lg"></i>
+              </a>
+            </li>
+          {% else %}
+            <li>
+              <a href="/account/login" title="{{ 'layout.customer.log_in' | t }}" class="log-in-button">
+                <i class="fa fa-user fa-lg"></i>
+              </a>
+            </li>
+          {% endif %}
+        {% endif %}
+
+        <li>
+          <a href="/cart" class="site-header__cart-toggle{% if settings.ajax_cart_method == "drawer" %} js-drawer-open-right-link{% endif %}" aria-controls="CartDrawer" aria-expanded="false">
+            <i class="fa fa-shopping-cart fa-lg"></i>
+                    <span class="site-header__cart-indicator {% if cart.item_count == 0 %}hide{% endif %}"></span>
+          </a>
+        </li>
+
+      </ul>
+    </div>
+        </div>
+
+    {% endif %}
+
+            {% if section.settings.logo-placement == 'above' %}
+
+            <div class="grid--full grid--center">
+                <div class="grid__item large--one-whole">
+                    <div class="site-header__logo large--center" itemscope itemtype="http://schema.org/Organization">
+                        {{ header_logo }}
+                </div>
+            </div>
+            <div class="grid__item large--one-whole">
+
+                <div class="top-links">
+
+                    <ul class="site-nav" id="AccessibleNav" role="navigation">
+                        {% include 'site-nav' %}
+                    </ul>
+
+                </div>
+
+            </div>
+
+                {% comment %}
+                Show number of items in the cart and total cost in the /cart link
+
+                Ajax Cart Notes:
+                - #cartCount updates the total number of items in the cart
+                - #cartCost updates the total cost of the cart
+                - Documentation:  http://shopify.com/timber#ajax-cart
+                {% endcomment %}
+                <div class="top-links">
+
+                    <ul class="top-links--icon-links">
+
+                        {% if settings.show_multiple_currencies %}
+                            <li class="currency-picker--wrapper{% if section.settings.overlay_header %} overlay--currency-wrapper{% endif %}">
+
+                                <select class="currency-picker" name="currencies">
+                                    {% assign codes = 'USD,EUR,GBP,CAD,ARS,AUD,BBD,BDT,BSD,BHD,BRL,BOB,BND,BGN,ILS,MMK,KYD,CLP,CNY,COP,CRC,HRK,CZK,DKK,DOP,XCD,EGP,XPF,FJD,GHS,GTQ,GYD,GEL,HKD,HUF,ISK,INR,IDR,NIS,JMD,JPY,JOD,KZT,KES,KWD,LVL,LTL,MXN,MYR,MUR,MDL,MAD,MNT,MZN,ANG,NZD,NGN,NOK,OMR,PKR,PYG,PEN,PHP,PLN,QAR,RON,RUB,SAR,RSD,SCR,SGD,SYP,ZAR,KRW,LKR,SEK,CHF,TWD,THB,TZS,TTD,TRY,UAH,AED,UYU,VEB,VND,ZMK' | split: ',' %}
+                                    {% assign supported_codes = settings.supported_currencies | split: ' ' %}
+                                    <option value="{{ shop.currency }}" selected="selected">{{ shop.currency }}</option>
+                                    {% for code in supported_codes %}
+                                        {% if code != shop.currency and codes contains code %}
+                                            <option value="{{ code }}">{{ code }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+
+                            </li>
+                        {% endif %}
+
+                        {% if section.settings.enable_search %}
+                            <li>
+                                <a href="/search" class="search-button">
+                                    <i class="fa fa-search fa-lg"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% if shop.customer_accounts_enabled %}
+                            {% if customer %}
+                                <li>
+                                    <a href="/account" title="{{ 'layout.customer.account' | t }}">
+                                        <i class="fa fa-user fa-lg"></i>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a href="/account/login" title="{{ 'layout.customer.log_in' | t }}" class="log-in-button">
+                                        <i class="fa fa-user fa-lg"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+
+                        <li>
+                            <a href="/cart" class="site-header__cart-toggle{% if settings.ajax_cart_method == "drawer" %} js-drawer-open-right-link{% endif %}" aria-controls="CartDrawer" aria-expanded="false">
+                                <i class="fa fa-shopping-cart fa-lg"></i>
+                                <span class="site-header__cart-indicator {% if cart.item_count == 0 %}hide{% endif %}"></span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+
+                {% endif %}
+
+      </div>
+    </header>
+
+<nav class="nav-bar mobile-nav-bar-wrapper large--hide medium-down--show{% if section.settings.sticky_header %} sticky-header sticky-header-transformed ui sticky{% endif %}{% if section.settings.overlay_header %} overlay-header{% endif %}">
+  <div class="wrapper">
+    <div class="large--hide medium-down--show">
+      <div class="mobile-grid--table">
+        <div class="grid__item one-sixth">
+          <div class="site-nav--mobile">
+            <button type="button" class="icon-fallback-text site-nav__link js-drawer-open-left-link" aria-controls="NavDrawer" aria-expanded="false">
+              <i class="fa fa-bars fa-2x"></i>
+              <span class="fallback-text">{{ 'layout.navigation.menu' | t }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid__item four-sixths">
+          {{ header_logo }}
+        </div>
+
+        <div class="grid__item one-sixth text-right">
+          <div class="site-nav--mobile">
+            <a href="/cart" class="{% if settings.ajax_cart_method == 'drawer' %}js-drawer-open-right-link {% endif %}site-nav__link" aria-controls="CartDrawer" aria-expanded="false">
+              <span class="icon-fallback-text">
+                <i class="fa fa-shopping-cart fa-2x"></i>
+                <span class="site-header__cart-indicator {% if cart.item_count == 0 %}hide{% endif %}"></span>
+                <span class="fallback-text">{{ 'layout.cart.title' | t }}</span>
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+</div>
+
+<style>
+
+#site-title{
+	padding: {{ section.settings.logo_padding }}px 0;
+}
+
+.site-nav__dropdown li{
+  text-align: {{ section.settings.dropdown_alignment }};
+}
+
+
+</style>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_max_width",
+      "min": 100,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "label": "Width (in pixels)",
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "logo_padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding around logo (in pixels)",
+      "default": 10
+    },
+    {
+      "type": "link_list",
+      "id": "main_linklist",
+      "label": "Main menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_header",
+      "label": "Enable 'sticky' header",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "overlay_header",
+      "label": "Overlay header over home page",
+      "default": false,
+      "info": "This will place the header directly over the home page content."
+    },
+    {
+      "type": "image_picker",
+      "id": "overlay_logo",
+      "label": "Overlay logo"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_search",
+      "label": "Enable search",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "logo-placement",
+      "label": "Logo placement",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+        "value": "above",
+        "label": "Above"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "dropdown_alignment",
+      "label": "Dropdown alignment",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    }
+        
+        
+        
+  
+        
+        
+        
+        
+  ]
+        
+}
+{% endschema %}

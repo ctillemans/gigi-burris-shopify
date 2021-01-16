@@ -1,0 +1,72 @@
+<div class="grid-view-item">
+  <div class="grid-view-item-image">
+
+    {% if section.settings.hover-effect %}
+      <div class="reveal">
+    {% endif %}
+
+    <a href="{{ product.url | within: collection }}" title="{{product.title}}" class="grid__image grid__image__match">
+      {% capture props %}
+         style="max-width: {{ product.featured_image.width }}px"
+      {% endcapture %}
+      {% include 'responsive-image' with product.featured_image, alt: product.title, props: props %}
+
+      {% if section.settings.hover-effect and product.images.size > 1 %}
+        <div class="hidden">
+          {% capture props %}
+            style="max-width: {{ product.featured_image.width }}px"
+          {% endcapture %}
+          {% include 'responsive-image' with product.images[1], alt: product.images.last.alt, props: props %}
+        </div>
+      {% endif %}
+    </a>
+
+    {% if section.settings.hover-effect %}
+      </div>
+    {% endif %}
+
+
+    {% if section.settings.quick_shop_enable %}
+      <div class="shop-now-wrapper">
+        <a class="shop-now-button" href="{{ product.url | within: collection }}">{{ 'products.product.quick_shop' | t }}</a>
+      </div>
+    {% endif %}
+
+  </div>
+  
+  <div class="grid-view-item--desc-wrapper">
+    <div>
+      {% if section.settings.show-vendor %}
+        <div class="product-grid--vendor-text">{{ product.vendor }}</div>
+      {% endif %}
+      <p class="product-grid--title">
+        <a href="{{ product.url | within: collection }}">{{ product.title }}</a>
+      </p>
+      <p class="product-grid--price">
+          {% if on_sale %}
+            {% if product.price_varies %}
+              {% capture sale_price %}
+                <span class="money">{{ product.price | money }}</span>
+              {% endcapture %}
+              {{ 'products.product.on_sale_from_html' | t: price: sale_price }}
+            {% else %}
+              <span class="product-grid--compare-price"><span class="money">{{ product.compare_at_price | money }}</span></span>
+              <span class="money">{{ product.price | money }}</span>
+            {% endif %}
+          {% else %}
+            {% if product.price_varies %}
+              <span class="product-grid--from-wrapper">{{ 'products.general.from_text' | t }}</span> <span class="money">{{ product.price | money }}</span>
+            {% else %}
+              <span class="money">{{ product.price | money }}</span>
+            {% endif %}
+          {% endif %}
+          {% if sold_out %}
+            <br><strong>{{ 'products.product.sold_out' | t }}</strong>
+          {% endif %}
+          {% if section.settings.show_reviews %}
+            <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+          {% endif %}
+      </p>
+    </div>
+  </div>
+</div>

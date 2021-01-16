@@ -1,0 +1,245 @@
+{% if settings.popup--enable %}
+
+<div id="popup" data-desktop-type="{{ settings.desktop-popup-style }}">
+    <input type="hidden" id="pop-up-time" value="{{ settings.pop-up-time }}" />
+    <input type="hidden" id="pop-up-delay" value="{{ settings.pop-up-delay }}" />
+
+	<div id="fullscreen" class="wrapper popup" style="display:none;">
+
+		<div class="grid display-table">
+			<div class="grid__item display-table-cell {% if settings.popup-newsletter-top != blank %}large--one-half {% else %} large--one-whole {% endif %}">
+				<div class="popup--body">
+                    {% if settings.settings.pop-up-text-header-text != empty %}
+						<h2 class="custom-font">{{ settings.pop-up-text-header-text }}</h2>
+                    {% endif %}
+                    {% if settings.pop-up-text-description-text != empty %}
+						<div class="popup--description">
+                        	{{ settings.pop-up-text-description-text }}
+						</div>
+                    {% endif %}
+
+                    {% if settings.popup--show-newsletter %}
+						<div id="subs-container" class="clearfix">
+							<div id="mc_embed_signup">
+                                {% form 'customer' %}
+                                {{ form.errors | default_errors }}
+                                {% if form.posted_successfully? %}
+									<p class="note form-success">{{ 'general.newsletter_form.confirmation' | t }}</p>
+                                {% else %}
+									<div class="input-group">
+										<div class="form-control">
+										<input type="email" value="{% if customer %}{{ customer.email }}{% endif %}" placeholder="{{ 'general.newsletter_form.newsletter_email' | t }}" name="contact[email]" id="Email" class="input-group-field footer-email-input" aria-label="{{ 'general.newsletter_form.newsletter_email' | t }}">
+										<input type="hidden" name="contact[tags]" value="newsletter">
+										</div>
+										<div class="form-control">
+										<span>
+										<input type="submit" class="btn footer-email-submit" name="subscribe" id="subscribe" value="{{ 'general.newsletter_form.submit' | t }}">
+										</span>
+										</div>
+										<div class="newsletter--blurb"></div>
+									</div>
+                                {% endif %}
+                                {% endform %}
+							</div>
+						</div>
+                    {% endif %}
+
+        {% if settings.popup--show-social-icons %}
+          <div class="social-media-footer">
+            {% include 'social-icons' %}
+          </div>
+        {% endif %}
+
+				</div>
+
+			</div>
+
+            {% if settings.popup-newsletter-top != blank %}
+
+				<div class="grid__item large--one-half popup_image display-table-cell">
+							<div class="popup_image--inner">
+								{% if settings.popup-newsletter-top == blank %}
+									{{ 'image' | placeholder_svg_tag: 'icon icon--placeholder' }}
+								{% else %}
+									{% capture props %}style="max-width: {{ settings.popup-newsletter-top.width }}px"{% endcapture %}
+									{% include 'responsive-image' with settings.popup-newsletter-top, props: props %}
+								{% endif %}
+							</div>
+
+				</div>
+            {% endif %}
+		</div>
+
+	</div>
+
+	<div id="slide-up" class="wrapper" style="display:none;">
+
+		<a class="popup--close-btn"><i class="fa fa-times fa-2x" aria-hidden="true"></i></a>
+
+		<div class="grid">
+
+			{% if settings.popup-newsletter-top != blank %}
+			<div class="grid__item medium--one-half large--one-half small--hide popup--image-wrapper">
+				<div class="popup--image">
+					{% if settings.popup-newsletter-top == blank %}
+						{{ 'image' | placeholder_svg_tag: 'icon icon--placeholder' }}
+					{% else %}
+						{% capture props %}style="max-width: {{ settings.popup-newsletter-top.width }}px"{% endcapture %}
+						{% include 'responsive-image' with settings.popup-newsletter-top, props: props %}
+					{% endif %}
+				</div>
+			</div>
+			{% endif %}
+
+			<div class="grid__item medium--one-half large--one-third">
+				<div class="popup--body">
+					{% if settings.settings.pop-up-text-header-text != empty %}
+						<h3 class="custom-font">{{ settings.pop-up-text-header-text }}</h3>
+					{% endif %}
+					{% if settings.pop-up-text-description-text != empty %}
+						{{ settings.pop-up-text-description-text }}
+					{% endif %}
+
+					{% if settings.popup--show-newsletter %}
+						<div id="subs-container" class="clearfix">
+							<div id="mc_embed_signup">
+                {% form 'customer' %}
+                {{ form.errors | default_errors }}
+                {% if form.posted_successfully? %}
+                <p class="note form-success">{{ 'general.newsletter_form.confirmation' | t }}</p>
+                {% else %}
+                <div class="input-group">
+                <input type="email" value="{% if customer %}{{ customer.email }}{% endif %}" placeholder="{{ 'general.newsletter_form.newsletter_email' | t }}" name="contact[email]" id="Email" class="input-group-field footer-email-input" aria-label="{{ 'general.newsletter_form.newsletter_email' | t }}">
+                <input type="hidden" name="contact[tags]" value="newsletter">
+                <span>
+                <input type="submit" class="btn footer-email-submit" name="subscribe" id="subscribe" value="{{ 'general.newsletter_form.submit' | t }}">
+                </span>
+                </div>
+                {% endif %}
+                {% endform %}
+							</div>
+						</div>
+					{% endif %}
+
+					{% if settings.popup--show-social-icons %}
+    					<div class="social-media-footer">
+    					  {% include 'social-icons' %}
+    					</div>
+          {% endif %}
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+	{% endif %}
+
+</div>
+
+<script type="text/javascript">
+	window.addEventListener('load', load_popup);
+  window.addEventListener('shopify:section:load', load_popup);
+  $(window).resize(function() {
+      var popup = document.querySelector('#popup');
+      if (!popup) {
+          return;
+      }
+      var isFullscreen = $.fancybox.isOpen;
+      if($(window).width() < 769){
+        if (isFullscreen) {
+            // switch from fullscreen to slide-up
+            $.fancybox.close();
+            showSlideUpPopup();
+        }
+      } else {
+            if(popup.classList.contains('visible') && "{{ settings.desktop-popup-style }}" == "fullscreen"){
+                popup.classList.remove('visible');
+                showFullScreenPopup();
+            }
+            if (isFullscreen) {
+                $.fancybox.reposition();
+            }
+        }
+  });
+
+  function load_popup() {
+		var show_popup = false;
+		var pop_up_time = $('#pop-up-time').val();
+    var pop_up_delay = $('#pop-up-delay').val();
+		var popup_enabled = pop_up_time !== undefined;
+		var has_popup_cookie = $.cookie('popup-cookie') === 'true';
+
+		if (!popup_enabled) {
+			// popup is disabled
+			return;
+		} else if("{{ settings.popup--test-mode }}" == "true") {
+			// popup is in test mode - will show immediately in editor and on live site
+			show_Popup();
+		} else if (!has_popup_cookie) {
+			// popup cookie is not set, show popup this time
+			setTimeout(show_Popup, 1000 * pop_up_delay);
+			$.cookie('popup-cookie', 'true', {expires: parseInt(pop_up_time)});
+		}
+
+  }
+
+		function show_Popup() {
+
+		    if($(window).width() < 769){
+                $.fancybox.close();
+                showSlideUpPopup();
+        } else {
+              if("{{ settings.desktop-popup-style }}" == "fullscreen"){
+                  popup.classList.remove('visible');
+                  showFullScreenPopup();
+              } else {
+                  showSlideUpPopup();
+				        }
+          }
+		}
+
+		$('.popup--close-btn').on('click', function () {
+			document.querySelector('#popup').classList.remove('visible');
+		});
+
+	function showSlideUpPopup(){
+
+	    if("{{ settings.popup--enable }}" == "true") {
+
+            document.querySelector('#slide-up').removeAttribute("style");
+            document.querySelector('#popup').classList.add('slide-up');
+            document.querySelector('#popup').classList.add('visible');
+
+        }
+
+	}
+
+	function showFullScreenPopup(){
+
+        if("{{ settings.popup--enable }}" == "true")
+        {
+
+            document.querySelector('#popup').classList.add('fullscreen');
+            document.querySelector('#fullscreen').removeAttribute("style");
+
+            $.fancybox({
+                'autoScale': true,
+                'transitionIn': 'elastic',
+                'transitionOut': 'elastic',
+                'speedIn': 500,
+                'speedOut': 300,
+                'autoDimensions': true,
+                'centerOnScroll': true,
+                'href': '#popup #fullscreen',
+                'wrapCSS': 'fullscreen-popup-fancybox',
+                tpl: {
+                    closeBtn: '<div class="popup--close fancybox-close"></div>'
+                }
+            });
+
+        }
+
+	}
+
+</script>

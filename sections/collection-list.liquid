@@ -1,0 +1,190 @@
+{% case section.settings.colors %}
+  {% when 'white' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--white">
+  {% when 'light' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--light">
+  {% when 'accent' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--accent">
+  {% when 'dark' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--dark">
+{% endcase %}
+
+<div class="homepage-collections-background">
+
+<div class="wrapper show-on-scroll">
+
+	<div class="page-width">
+	  {% if section.settings.title != blank %}
+	    <div class="sitewide--title-wrapper">
+	      <h2 class="homepage-sections--title">{{ section.settings.title | escape }}</h2>
+	    </div>
+	  {% endif %}
+
+    {% if section.settings.richtext != '' %}
+    <div class="grid">
+      <div class="grid__item large--one-half push--large--one-quarter">
+        <div class="homepage-sections--description">{{ section.settings.richtext }}</div>
+      </div>
+    </div>
+    {% endif %}
+
+	  {% case section.blocks.size %}
+	    {% when 2 %}
+	      {%- assign grid_item_width = 'large--one-half' -%}
+	    {% when 3 %}
+	      {%- assign grid_item_width = 'large--one-third' -%}
+	    {% when 4 %}
+	      {%- assign grid_item_width = 'large--one-quarter' -%}
+	    {% when 5 %}
+	      {%- assign grid_item_width = 'large--one-fifth' -%}
+	    {% when 6 %}
+	      {%- assign grid_item_width = 'large--one-sixth' -%}
+
+	  {% endcase %}
+
+	  <div class="collection-grid">
+	    <div class="grid grid--uniform">
+	      {% for block in section.blocks %}
+	        <div class="grid__item homepage-collection-grid-item {{ grid_item_width }}" {{ block.shopify_attributes }}>
+	          {%- assign collection = collections[block.settings.collection] -%}
+	          {% capture collection_title %}{{ collection.title | escape }}{% endcapture %}
+
+{% if collection.empty? %}
+  {% comment %}add default state for collection block in storefront editor{% endcomment %}
+  {% capture collection_title %}{{ 'homepage.onboarding.collection_title' | t }}{% endcapture %}
+{% else %}
+  {% capture collection_title %}{{ collection.title }}{% endcapture %}
+{% endif %}
+
+
+<div class="homepage-collection-grid-inner">
+	<div class="grid-image">
+		<a href="{% if collection.empty? %}/admin/collections{% else %}{{ collection.url }}{% endif %}" class="grid-image--centered">
+
+			{% if collection.empty? %}
+				{% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+				{{ 'collection-' | append: current | placeholder_svg_tag: 'icon icon--placeholder' }}
+			{% else %}
+				{% if collection.image %}
+					{% assign image = collection.image %}
+				{% elsif collection.product.size > 0 %}
+					{% assign product = collection.products | first %}
+					{% assign image = product.featured_image %}
+				{% else %}
+					{% assign image = nil %}
+				{% endif %}
+
+				{% if section.blocks.size == 1 %}
+					{% assign class = 'homepage-collection-grid-image-single' %}
+				{% else %}
+					{% assign class = '' %}
+				{% endif %}
+
+				{% include 'responsive-image' with image, alt: image.alt, class: class %}
+			{% endif %}
+
+		</a>
+	</div>
+
+	<div class="hp-title homepage-collection-link">
+		<div class="homepage-collection-grid-item-details">
+			<a href="{{ collection.url }}" class="collection-item__title">{{ collection_title }}</a>
+		</div>
+	</div>
+
+</div>
+
+	        </div>
+	      {% endfor %}
+	    </div>
+	  </div>
+
+	  {% if section.blocks.size == 0 %}
+	    <div class="placeholder-noblocks">
+  {{ 'homepage.onboarding.no_content' | t }}
+</div>
+
+	  {% endif %}
+	</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% schema %}
+{
+  "name": "Collection list",
+  "class": "featured-collections-wrapper",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "select",
+      "id": "colors",
+      "label": "Color scheme",
+      "default": "light",
+      "options": [
+        {
+          "value": "white",
+          "label": "Minimal"
+        },
+        {
+          "value": "light",
+          "label": "Light"
+        },
+        {
+          "value": "accent",
+          "label": "Feature"
+        },
+        {
+          "value": "dark",
+          "label": "Dark"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Featured Collections"
+    },
+    {
+      "type": "richtext",
+      "id": "richtext",
+      "label": "Description",
+      "info": "Optional"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "featured_collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "label": "Collection",
+          "id": "collection",
+          "type": "collection"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection list",
+      "category": "Collection",
+      "blocks": [
+        {
+          "type": "featured_collection"
+        },
+        {
+          "type": "featured_collection"
+        },
+        {
+          "type": "featured_collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

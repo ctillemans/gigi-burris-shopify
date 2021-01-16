@@ -1,0 +1,289 @@
+<!-- /templates/article.liquid -->
+{% comment %}
+
+  Comments will not appear right after they are submitted, either to be checked for spam
+  or to await moderation. When a comment is submitted, the browser is redirected to a page
+  that includes the new comment id in its URL.
+    Example: http://shopname.myshopify.com/blogs/news/2022072-my-post?comment=3721372
+
+  More information:
+    - http://docs.shopify.com/themes/liquid-variables/comment
+
+{% endcomment %}
+
+{% assign number_of_comments = article.comments_count %}
+
+{% comment %}
+  If a comment was just submitted and it has no blank fields, we have an extra comment to count.
+{% endcomment %}
+{% if comment and comment.created_at %}
+  {% assign number_of_comments = article.comments_count | plus: 1 %}
+{% endif %}
+
+
+<br><br>  <div>
+    <h1 class="page--title">{{ article.title }}</h1>
+  </div>
+
+<div class="grid blog-main--wrapper">
+
+  <article class="grid__item large--three-quarters" itemscope itemtype="http://schema.org/Article" style="width:100%;">
+
+    <div class="rte" itemprop="articleBody">
+		{% if article.image %}
+			
+		{% endif %}
+
+      {{ article.content }}
+    </div><BR>
+    <div class="sitewide--title-wrapper">
+
+  
+  <div style="text-align: center;margin:-10px 0px 10px 0px;">
+    <a href="https://gigiburris.com/blogs/bridal" class="homepage-featured-box-btn" style="text-decoration: none;margin:10px;">Back to Real Brides</a>    <a href="https://gigiburris.com/collections/bridal" class="homepage-featured-box-btn" style="text-decoration: none;margin:10px;">Shop Bridal</a>
+      </div></div>
+
+    {% if settings.social_sharing_blog %}
+    		{% if template contains 'article' or template contains 'blog' %}
+
+    	{% capture permalinkURL %}{{ shop.url }}{{ article.url }}{% endcapture %}
+    	{% capture shareTitle %}{{ article.title }}{% endcapture %}
+    	{% capture shareImage %}{{ article | img_url: '1200x' }}{% endcapture %}
+
+    {% elsif template contains 'product' %}
+
+    	{% capture permalinkURL %}{{ shop.url }}{{ product.url }}{% endcapture %}
+    	{% capture shareTitle %}{{ product.title }}{% endcapture %}
+    	{% capture shareImage %}{{ product.featured_image | product_img_url: 'original' }}{% endcapture %}
+
+    {% endif %}
+
+    <div id="sharing" class="social-sharing is-clean" data-permalink="{{ permalinkURL }}">
+
+    	{% if settings.share_facebook %}
+    	<!-- https://developers.facebook.com/docs/plugins/share-button/ -->
+    	<a target="_blank" href="//www.facebook.com/sharer.php?u={{ permalinkURL }}" class="share-facebook">
+    	<span class="icon icon-facebook" aria-hidden="true"></span>
+    	<span class="share-title">Share</span>
+    	</a>
+    	{% endif %}
+
+    	{% if settings.share_twitter %}
+    	<!-- https://dev.twitter.com/docs/intents -->
+    	<a target="_blank" href="//twitter.com/share?url={{ permalinkURL }}&amp;text={{ shareTitle }}" class="share-twitter">
+    	<span class="icon icon-twitter" aria-hidden="true"></span>
+    	<span class="share-title">Tweet</span>
+    	</a>
+    	{% endif %}
+
+    	{% if settings.share_pinterest %}
+    	<!--
+    	https://developers.pinterest.com/pin_it/
+    	Pinterest get data from the same Open Graph meta tags Facebook uses
+    	-->
+    	<a target="_blank" href="//pinterest.com/pin/create/button/?url={{ permalinkURL }}&amp;media={{ shareImage }}&amp;description={{ product.title | escape }}" class="share-pinterest">
+    	<span class="icon icon-pinterest" aria-hidden="true"></span>
+    	<span class="share-title">Pin it</span>
+    	</a>
+    	{% endif %}
+
+    </div>
+    	{% endif %}
+
+    {% comment %}
+      Create links to the next and previous articles, if available.
+    {% endcomment %}
+    {% if blog.next_article or blog.previous_article %}
+      <hr>
+      <p class="clearfix">
+        {% if blog.previous_article %}
+          <span class="left">
+            &larr; {{ 'blogs.article.older_post' | t | link_to: blog.previous_article }}
+          </span>
+        {% endif %}
+        {% if blog.next_article %}
+          <span class="right">
+            {{ 'blogs.article.newer_post' | t | link_to: blog.next_article }} &rarr;
+          </span>
+        {% endif %}
+      </p>
+    {% endif %}
+
+    {% if blog.comments_enabled? %}
+	{% if number_of_comments > 0 %}
+      <hr>
+
+      <div class="h3">{{ 'blogs.comments.with_count' | t: count: number_of_comments }}</div>
+	{% endif %}
+
+      {% comment %}
+        Just like blog.liquid page, define how many comments should be on each page.
+      {% endcomment %}
+      {% paginate article.comments by 5 %}
+        {% comment %}
+          #comments is required, it is used as an anchor link by Shopify.
+        {% endcomment %}
+        <div id="comments">
+
+          {% if comment and comment.created_at %}
+            <p class="note form-success">
+              {% if blog.moderated? %}
+                {{ 'blogs.comments.success_moderated' | t }}
+              {% else %}
+                {{ 'blogs.comments.success' | t }}
+              {% endif %}
+            </p>
+          {% endif %}
+
+          {% if number_of_comments > 0 %}
+            <ul class="no-bullets">
+              {% comment %}
+                If a comment was just submitted with no blank field, show it.
+              {% endcomment %}
+              {% if comment and comment.created_at %}
+                <li id="{{ comment.id }}" class="comment comment-wrapper first{% if article.comments_count == 0 %} last{% endif %}">
+
+<div class="comment">
+  <div class="rte">
+    {{ comment.content }}
+  </div>
+
+  <span class="comment-data">
+    {% capture author %}{{ comment.author }}{% endcapture %}
+    {% capture date %}<time datetime="{{ comment.created_at | date: '%Y-%m-%d' }}">{{ comment.created_at | date: format: 'month_day_year' }}</time>{% endcapture %}
+    {{ 'blogs.article.comment_meta_html' | t: author: author, date: date }}
+  </span>
+</div>
+
+                </li>
+              {% endif %}
+
+              {% comment %}
+                Showing the rest of the comments.
+              {% endcomment %}
+              {% for comment in article.comments %}
+                <li id="{{ comment.id }}" class="comment comment-wrapper {% unless number_of_comments > article.comments_count %}{% if forloop.first %} first{% endif %}{% endunless %}{% if forloop.last %} last {% endif %}">
+
+<div class="comment">
+  <div class="rte">
+    {{ comment.content }}
+  </div>
+
+  <span class="comment-data">
+    {% capture author %}{{ comment.author }}{% endcapture %}
+    {% capture date %}<time datetime="{{ comment.created_at | date: '%Y-%m-%d' }}">{{ comment.created_at | date: format: 'month_day_year' }}</time>{% endcapture %}
+    {{ 'blogs.article.comment_meta_html' | t: author: author, date: date }}
+  </span>
+</div>
+
+
+                </li>
+              {% endfor %}
+            </ul>
+
+            {% if paginate.pages > 1 %}
+<div class="pagination">
+
+  <ul>
+    {% if paginate.previous %}
+      <li class="pagination-arrow"><a href="{{ paginate.previous.url }}"><i class="fa fa-chevron-left"></i></a></li>
+    {% else %}
+      <li class="prev disabled"><a href="#" onclick="return false;">&laquo;</a></li>
+    {% endif %}
+
+    {% for part in paginate.parts %}
+      {% if part.is_link %}
+        <li class="pagination-number">{{ part.title | link_to: part.url }}</li>
+      {% else %}
+        {% if part.title == '&hellip;' %}
+        <li class="ellipsis">{{ part.title }}</li>
+        {% else %}
+        <li class="active pagination-number">{{ part.title | link_to: part.url }}</li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if paginate.next %}
+      <li class="pagination-arrow"><a href="{{ paginate.next.url }}"><i class="fa fa-chevron-right"></i></a></li>
+    {% else %}
+      <li class="next disabled"><a href="#" onclick="return false;">&raquo;</a></li>
+    {% endif %}
+  </ul>
+
+</div>
+{% endif %}
+
+
+            <hr>
+
+          {% endif %}
+
+          <div class="form-vertical">
+            {% form 'new_comment', article %}
+              <div class="h3">{{ 'blogs.comments.title' | t }}</div>
+
+              {{ form.errors | default_errors }}
+
+              <div class="grid">
+
+                <div class="grid__item large--one-half">
+                  <label for="CommentAuthor" class="hidden-label">{{ 'blogs.comments.name' | t }}</label>
+                  <input type="text" name="comment[author]" id="CommentAuthor" class="input-full{% if form.errors contains 'author' %} error{% endif %}" placeholder="{{ 'blogs.comments.name' | t }}" value="{{ form.author }}" autocapitalize="words">
+
+                  <label for="CommentEmail" class="hidden-label">{{ 'blogs.comments.email' | t }}</label>
+                  <input type="email" name="comment[email]" id="CommentEmail" class="input-full{% if form.errors contains 'email' %} error{% endif %}" placeholder="{{ 'blogs.comments.email' | t }}" value="{{ form.email }}" autocorrect="off" autocapitalize="off">
+                </div>
+
+                <div class="grid__item large--one-half">
+                  <label for="CommentBody" class="hidden-label">{{ 'blogs.comments.message' | t }}</label>
+                  <textarea name="comment[body]" id="CommentBody" class="input-full{% if form.errors contains 'body' %} error{% endif %}" placeholder="{{ 'blogs.comments.message' | t }}">{{ form.body }}</textarea>
+                </div>
+
+              </div>
+
+              {% if blog.moderated? %}
+                <p>{{ 'blogs.comments.moderated' | t }}</p>
+              {% endif %}
+
+              <input type="submit" class="btn article-comment--btn" value="{{ 'blogs.comments.post' | t }}">
+            {% endform %}
+          </div>
+
+        </div>
+      {% endpaginate %}
+    {% endif %}
+
+  </article>
+
+  
+</div>
+
+{% schema %}
+{
+  "name": "Article pages",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "blog-sidebar-image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "blog-sidebar-link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_blog_tags",
+      "label": "Show tags",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_recent_posts",
+      "label": "Show 'Latest articles'",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

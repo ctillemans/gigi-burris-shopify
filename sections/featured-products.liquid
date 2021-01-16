@@ -1,0 +1,364 @@
+{% case section.settings.colors %}
+  {% when 'white' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--white">
+  {% when 'light' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--light">
+  {% when 'accent' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--accent">
+  {% when 'dark' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--dark">
+{% endcase %}
+
+<div class="wrapper show-on-scroll{% if section.settings.match-height %} products--match-height{% endif %}">
+
+  <div class="homepage-indiv-section-wrapper grid--full homepage-featured-content-wrapper feature-row__text--{{ section.settings.layout }}">
+
+    <div class="grid__item large--five-sixths push--large--one-twelfth homepage-featured-rich-text">
+
+<div class="page-width featured-products-wrapper">
+  {% if section.settings.title != blank %}
+      <div class="sitewide--title-wrapper">
+        <h2 class="homepage-sections--title">{{ section.settings.title | escape }}</h2>
+      </div>
+  {% endif %}
+
+  {% if section.settings.richtext != '' %}
+    <div class="rte featured-row__subtext textarea">{{ section.settings.richtext }}</div>
+  {% endif %}
+
+  </div>
+
+  </div>
+
+  {%- assign collection = collections[section.settings.collection] -%}
+
+  {% case section.settings.grid-desktop%}
+    {% when 2 %}
+      {%- assign desktop_item_width = 'large--one-half medium--one-half' -%}
+      {%- assign image_size = '800x1000' -%}
+    {% when 3 %}
+      {%- assign desktop_item_width = 'large--one-third medium--one-half' -%}
+      {%- assign image_size = '550x750' -%}
+    {% when 4 %}
+      {%- assign desktop_item_width = 'large--one-quarter medium--one-half' -%}
+      {%- assign image_size = '400x' -%}
+    {% when 5 %}
+      {%- assign desktop_item_width = 'large--one-fifth medium--one-half' -%}
+      {%- assign image_size = '300x' -%}
+    {% when 6 %}
+      {%- assign desktop_item_width = 'large--one-sixth medium--one-half' -%}
+      {%- assign image_size = '200x' -%}
+  {% endcase %}
+
+  {% case section.settings.grid-mobile%}
+    {% when 1 %}
+      {%- assign mobile_item_width = 'small--one-whole' -%}
+    {% when 2 %}
+      {%- assign mobile_item_width = 'small--one-half' -%}
+    {% when 3 %}
+      {%- assign mobile_item_width = 'small--one-third' -%}
+  {% endcase %}
+
+  {%- assign grid_item_width = desktop_item_width | append: ' ' | append: mobile_item_width -%}
+
+  {%- assign product_limit = section.settings.grid-desktop | times: section.settings.rows -%}
+
+  <div class="grid-uniform homepage-product-grid-wrapper">
+    {% for product in collection.products limit: product_limit %}
+      {%- assign grid_image_width = image_size -%}
+      {% comment %}
+        Set the default grid_item_width if no variable is set
+      {% endcomment %}
+      {% unless grid_item_width %}
+        {% assign grid_item_width = 'large--one-third medium--one-half' %}
+      {% endunless %}
+
+      {% comment %}
+        Check if the product is on sale and set a variable to be used below.
+      {% endcomment %}
+      {% assign on_sale = false %}
+      {% if product.compare_at_price > product.price %}
+        {% assign on_sale = true %}
+      {% endif %}
+
+      {% comment %}
+        Check if the product is sold out and set a variable to be used below.
+      {% endcomment %}
+      {% assign sold_out = true %}
+      {% if product.available %}
+        {% assign sold_out = false %}
+      {% endif %}
+
+      <div class="grid__item {{ grid_item_width }}">
+
+        <div class="grid-view-item">
+          <div class="grid-view-item-image">
+
+            {% if section.settings.hover-effect %}
+              <div class="reveal">
+            {% endif %}
+
+            <a href="{{ product.url | within: collection }}" title="{{product.title}}" class="grid__image grid__image__match">
+              {% capture props %}
+                style="max-width: {{ product.featured_image.width }}px"
+              {% endcapture %}
+              {% include 'responsive-image' with product.featured_image, alt: product.title, props: props %}
+
+              {% if section.settings.hover-effect and product.images.size > 1 %}
+                <div class="hidden">
+                  {% capture props %}
+                    style="max-width: {{ product.featured_image.width }}px"
+                  {% endcapture %}
+                  {% include 'responsive-image' with product.images[1], alt: product.images.last.alt, props: props %}
+                </div>
+              {% endif %}
+            </a>
+
+            {% if section.settings.hover-effect %}
+              </div>
+            {% endif %}
+
+            {% if section.settings.quick_shop_enable %}
+              <div class="shop-now-wrapper">
+                <a class="shop-now-button" href="{{ product.url | within: collection }}">{{ 'products.product.quick_shop' | t }}</a>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="grid-view-item--desc-wrapper">
+            <div>
+              {% if section.settings.show-vendor %}
+                <div class="product-grid--vendor-text">{{ product.vendor }}</div>
+              {% endif %}
+              <p class="product-grid--title">
+                <a href="{{ product.url | within: collection }}">{{ product.title }}</a>
+              </p>
+              <p class="product-grid--price">
+                  {% if on_sale %}
+                    {% if product.price_varies %}
+                      {% capture sale_price %}
+                        <span class="money">{{ product.price | money }}</span>
+                      {% endcapture %}
+                      {{ 'products.product.on_sale_from_html' | t: price: sale_price }}
+                    {% else %}
+                      <span class="product-grid--compare-price"><span class="money">{{ product.compare_at_price | money }}</span></span>
+                      <span class="money">{{ product.price | money }}</span>
+                    {% endif %}
+                  {% else %}
+                    {% if product.price_varies %}
+                      <span class="product-grid--from-wrapper">{{ 'products.general.from_text' | t }}</span> <span class="money">{{ product.price | money }}</span>
+                    {% else %}
+                      <span class="money">{{ product.price | money }}</span>
+                    {% endif %}
+                  {% endif %}
+                  {% if sold_out %}
+                    <br><strong>{{ 'products.product.sold_out' | t }}</strong>
+                  {% endif %}
+              </p>
+              {% if section.settings.show_reviews %}
+                <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+              {% endif %}
+            </div>
+
+          </div>
+
+            {% if product.compare_at_price_max > product.price and product.available %}
+              <div class="sale-badge">{{ 'products.product.on_sale' | t }}</div>
+            {% endif %}
+
+            {% unless product.available %}
+              <div class="sold-out-badge">{{ 'products.product.sold_out' | t }}</div>
+            {% endunless %}
+
+        </div>
+
+      </div>
+
+    {% else %}
+
+      {% for i in (1..product_limit) %}
+        <div class="grid__item {{ grid_item_width }}">
+          <div class="grid-view-item">
+            <a href="/admin/products" class="grid-view-item__link">
+              <div class="grid-view-item__image">
+                {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                {{ 'product-' | append: current | placeholder_svg_tag: 'icon icon--placeholder grid__image' }}
+              </div>
+              <div class="grid-view-item--desc-wrapper">
+                {% if section.settings.show-vendor %}
+                  <div class="product-grid--vendor-text">{{ 'homepage.onboarding.product_vendor' | t }}</div>
+                {% endif %}
+                  <p class="product-grid--title">{{ 'homepage.onboarding.product_title' | t }}</p>
+                  <p class="product-grid--price"><span class="money">$19.99</span></p>
+                  {% if section.settings.show_reviews %}
+                    <span class="spr-badge" id="spr_badge_7826197321" data-rating="5.0">
+                      <span class="spr-starrating spr-badge-starrating">
+                        <i class="spr-icon spr-icon-star"></i>
+                        <i class="spr-icon spr-icon-star"></i>
+                        <i class="spr-icon spr-icon-star"></i>
+                        <i class="spr-icon spr-icon-star"></i>
+                        <i class="spr-icon spr-icon-star"></i>
+                      </span>
+                      <span class="spr-badge-caption">1 review</span>
+                    </span>
+                  {% endif %}
+              </div>
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    {% endfor %}
+  </div>
+
+</div>
+
+</div>
+
+</div>
+
+<style>
+@media screen and (max-width: 768px) {
+  .grid__item:nth-last-child(-n+2) {
+      margin-bottom: 0 !important;
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .grid__item:nth-last-child(-n+{{ section.settings.grid }}) {
+      margin-bottom: 0 !important;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Featured products",
+  "class": "featured-products-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "colors",
+      "label": "Color scheme",
+      "default": "white",
+      "options": [
+        {
+          "value": "white",
+          "label": "Minimal"
+        },
+        {
+          "value": "light",
+          "label": "Light"
+        },
+        {
+          "value": "accent",
+          "label": "Feature"
+        },
+        {
+          "value": "dark",
+          "label": "Dark"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "richtext",
+      "label": "Description",
+      "info": "Optional"
+    },
+    {
+      "id": "collection",
+      "type": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "header",
+      "content": "Products per row"
+    },
+    {
+      "type": "range",
+      "id": "grid-desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Desktop",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "grid-mobile",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Mobile",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "rows",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "label": "Rows",
+      "default": 2
+    },
+    {
+       "type": "checkbox",
+       "id": "quick_shop_enable",
+       "label": "Enable quick shop",
+       "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hover-effect",
+      "label": "Enable hover effect",
+      "default": false,
+      "info": "Shows your products second image on hover"
+    },
+    {
+      "type": "checkbox",
+      "id": "show-vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Auto-height images"
+    },
+    {
+      "type": "paragraph",
+      "content": "Set all of your images to be the same height"
+    },
+    {
+      "type": "checkbox",
+      "id": "match-height",
+      "label": "Enable auto-height",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Reviews"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reviews",
+      "label": "Enable",
+      "default": false
+    },
+    {
+      "type": "paragraph",
+      "content": "You will need to install Shopify's [Product Reviews app](https://apps.shopify.com/product-reviews) before enabling this option."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured collection",
+      "category": "Collection"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,168 @@
+/**
+ * Front-end support (Menus Uncomplicated) stylesheet specific to gigi-burris.myshopify.com
+ *   - dependencies: none
+ */
+
+/**
+ * @preserve Menus Uncomplicated - v0.9.11 - gigi-burris.myshopify.com
+ * @licence (c) 2016 Lightenna Ltd
+ */
+
+.uncomplicated-menus-overlay {
+    position: absolute;
+    z-index: 10000;
+    left: 10px;
+    right: 10px;
+    border: 1px solid #000000;
+    background-color: #FFFFFF;
+    text-align: left;
+    padding: 1.0em;
+    display: none;
+}
+
+.uncomplicated-menus-overlay .close-x {
+    position: absolute !important;
+    top: 0.5em;
+    right: 0.5em;
+    padding: 0;
+    line-height: 0.7em;
+    z-index: 1;
+    border: 1px solid #666;
+    border-radius: 1em;
+    color: #666;
+    font-size: 1.6em;
+    font-weight: bold;
+    text-decoration: none;
+    width: 0.9em;
+    height: 0.9em;
+    text-align: center;
+}
+
+/* unshowable hides everything */
+.uncomplicated-menus-unshowable .uncomplicated-menus-overlay {
+    display: none;
+}
+
+/* (always) turn off nested sub-menus in the existing header nav */
+.uncomplicated-menus-selectswap li ul {
+    display: none !important;
+}
+
+/* columns across the overlay */
+.uncomplicated-menus-overlay-pane {
+    float: left;
+    margin: 0;
+    padding: 0;
+}
+
+.uncomplicated-menus-overlay-pane ul {
+    margin: 1.0em;
+}
+
+.uncomplicated-menus-breadth-1 { width: 100%; }
+.uncomplicated-menus-breadth-2 { width: 50%; }
+.uncomplicated-menus-breadth-3 { width: 33%; }
+.uncomplicated-menus-breadth-4 { width: 25%; }
+.uncomplicated-menus-breadth-5 { width: 20%; }
+.uncomplicated-menus-breadth-6 { width: 16%; }
+.uncomplicated-menus-breadth-7-or-more { width: 14%; }
+
+@media only screen and (max-width: 768px) {
+    .uncomplicated-menus-breadth-4 { width: 33%; }
+    .uncomplicated-menus-breadth-5 { width: 33%; }
+    .uncomplicated-menus-breadth-6 { width: 33%; }
+    .uncomplicated-menus-breadth-7-or-more { width: 33%; }
+}
+
+@media only screen and (max-width: 512px) {
+    .uncomplicated-menus-breadth-3 { width: 50%; }
+    .uncomplicated-menus-breadth-4 { width: 50%; }
+    .uncomplicated-menus-breadth-5 { width: 50%; }
+    .uncomplicated-menus-breadth-6 { width: 50%; }
+    .uncomplicated-menus-breadth-7-or-more { width: 50%; }
+}
+
+/* make menu styles easy to turn off */
+.uncomplicated-menus-overlay.show-styled li:first-child {
+    font-weight: bold;
+    font-size: 110%;
+}
+
+.uncomplicated-menus-overlay.show-styled li.relative-level-0 {
+    margin-left: 0;
+}
+
+.uncomplicated-menus-overlay.show-styled li.relative-level-1 {
+    margin-left: 1.0em;
+}
+
+.uncomplicated-menus-overlay.show-styled li.relative-level-2 {
+    margin-left: 2.0em;
+}
+
+.uncomplicated-menus-overlay.show-styled li.relative-level-3 {
+    margin-left: 3.0em;
+}
+
+.uncomplicated-menus-overlay.show-styled li.relative-level-4 {
+    margin-left: 4.0em;
+}
+
+.uncomplicated-menus-overlay.show-styled li.relative-level-gt4 {
+    margin-left: 5.0em;
+}
+
+/* by default when styled, don't show product count on categories with 0 products */
+.uncomplicated-menus-overlay.show-styled span.pc-zero-hide {
+    display: none;
+}
+
+/* nopc class to remove product counts */
+.uncomplicated-menus-overlay.show-styled.show-nopc span.pc {
+    display: none;
+}
+
+/* themes - simple-emphasis */
+.uncomplicated-menus-overlay.show-simple-emphasis li.relative-level-0 a {
+    font-weight: bold;
+}
+
+.uncomplicated-menus-overlay.show-simple-emphasis li.relative-level-1 {
+    margin-left: 0;
+}
+
+.uncomplicated-menus-overlay.show-simple-emphasis li.relative-level-2 {
+    margin-left: 0.5em;
+}
+
+.uncomplicated-menus-overlay.show-simple-emphasis li.relative-level-3 {
+    margin-left: 1.0em;
+}
+
+.uncomplicated-menus-overlay.show-simple-emphasis li.relative-level-4 {
+    margin-left: 1.5em;
+}
+
+.uncomplicated-menus-overlay.show-simple-emphasis li.relative-level-5 {
+    margin-left: 2.0em;
+}
+
+
+/* make a preview menu available */
+html.force-menu-preview {
+    padding-top: 0 !important;
+}
+html.force-menu-preview iframe#admin_bar_iframe {
+    display: none;
+}
+html.force-menu-preview iframe#admin_bar_iframe {
+    display: none;
+}
+/* show the first overlay for every menu, rely on desktop being the second rendered menu */
+html.force-menu-preview .uncomplicated-menus-overlay {
+    top: 0;
+    left: 0;
+    display: block !important;
+}
+
+/* dynamic section, only used if over_ settings applied */

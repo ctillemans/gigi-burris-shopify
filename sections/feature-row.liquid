@@ -1,0 +1,222 @@
+{% capture section_width %}
+    {% if section.settings.layout == "full-width" %} section__full-width {% endif %}
+{% endcapture %}
+
+{% case section.settings.colors %}
+  {% when 'white' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--white {{ section_width }}">
+  {% when 'light' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--light {{ section_width }}">
+  {% when 'accent' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--accent {{ section_width }}">
+  {% when 'dark' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--dark {{ section_width }}">
+{% endcase %}
+
+{% if section.settings.layout == "full-width" %}
+    {% assign img_size = '2000x' %}
+{% else %}
+    {% assign img_size = '1200x' %}
+{% endif %}
+
+<style>
+  {% if section.settings.image != blank %}
+    {% capture selector %}.homepage-content--{{ section.id }} .img{% endcapture %}
+    {% include 'responsive-background-image' with section.settings.image, selector: selector %}
+
+    .homepage-content--{{ section.id }} .img {
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+  {% endif %}
+
+  .homepage-content--{{ section.id }} .img,
+  .homepage-content--{{ section.id }} .img .icon--placeholder {
+      height: {{ section.settings.image_height }};
+    }
+
+    @media only screen and (min-width: 768px) {
+        .homepage-content--{{ section.id }} .rellax.img {
+            height: {{ section.settings.image_height | remove:'vw' | times:1.5 | append:'vw' }};
+            margin-top: {{ section.settings.image_height | remove:'vw' | times:-0.25 | append:'vw' }};
+        }
+        .homepage-content--{{ section.id }} .img .icon--placeholder {
+            height: {{ section.settings.image_height | remove:'vw' | times:1.5 | append:'vw' }};
+        }
+    }
+
+  .parallax.parallax--{{ section.id }} {
+    height: {{ section.settings.image_height }};
+  }
+</style>
+
+<div class="{% if section.settings.layout != "full-width" %} wrapper {% endif %} ">
+
+<div class="homepage-indiv-section-wrapper grid--full homepage-featured-content-wrapper feature-row__text--{{ section.settings.layout }}">
+
+	{% capture image_layout %}
+		<div class="grid__item {% if section.settings.layout == "full-width" %} large--one-whole {% else %} large--three-quarters {% endif %} homepage-content--image homepage-content--{{ section.id }}">
+		    <div class="{% if section.settings.parallax %} parallax parallax--{{ section.id }}{% endif %}">
+			{% if section.settings.image != blank %}
+			    <div id="rellax--{{ section.id }}" class="img parallax-img{% if section.settings.parallax %} rellax{% endif %}" data-rellax-percentage="0.5"></div>
+			{% else %}
+			    <div id="rellax--{{ section.id }}" class="placeholder-background img{% if section.settings.parallax %} rellax{% endif %}" data-rellax-percentage="0.5">
+				        {{ 'lifestyle-1' | placeholder_svg_tag: 'icon icon--placeholder' }}
+			    </div>
+			{% endif %}
+		    </div>
+		</div>
+	{% endcapture %}
+
+	{% if section.settings.layout == 'left' or section.settings.layout == 'full-width' %}
+	  {{ image_layout }}
+	{% endif %}
+
+	<div class="grid__item homepage-featured-content-box {% if section.settings.layout == 'full-width' %} content_box--center {% endif %}">
+
+    {% if section.settings.title != blank or section.settings.text != blank or section.settings.button_label != blank %}
+
+    <div class="homepage-featured-content-box-inner show-on-scroll">
+
+			{% if section.settings.title != blank %}
+      <div class="sitewide--title-wrapper">
+				<h2 class="homepage-sections--title">{{ section.settings.title | escape }}</h2>
+      </div>
+			{% endif %}
+
+			{% if section.settings.text != blank %}
+				<div class="rte featured-row__subtext textarea">{{ section.settings.text }}</div>
+			{% endif %}
+
+			{% if section.settings.button_label != blank and section.settings.button_link != blank %}
+				<div>
+					<a href="{{ section.settings.button_link }}" class="homepage-featured-box-btn">
+						{{ section.settings.button_label | escape }}
+					</a>
+				</div>
+			{% endif %}
+
+		</div>
+
+    {% endif %}
+
+	</div>
+
+	{% if section.settings.layout == 'right' %}
+	  {{ image_layout }}
+	{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+{% schema %}
+{
+  "name": "Image with text",
+  "class": "image-with-text-wrapper",
+  "settings": [
+		{
+			"type": "select",
+			"id": "colors",
+			"label": "Color scheme",
+			"default": "white",
+			"options": [
+				{
+					"value": "white",
+					"label": "Minimal"
+				},
+				{
+					"value": "light",
+					"label": "Light"
+				},
+				{
+					"value": "accent",
+					"label": "Feature"
+				},
+				{
+					"value": "dark",
+					"label": "Dark"
+				}
+			]
+		},
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "parallax",
+      "label": "Enable parallax effect",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Image on left"
+        },
+        {
+          "value": "right",
+          "label": "Image on right"
+        }
+      ]
+    },
+    {
+    "type": "select",
+    "id": "image_height",
+    "label": "Image height",
+    "default": "40vw",
+    "options": [
+        {
+            "value": "30vw",
+            "label": "Small"
+        },
+        {
+            "value": "40vw",
+            "label": "Medium"
+        },
+        {
+            "value": "50vw",
+            "label": "Large"
+        }
+        ]
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Share brand or product details"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Pair large text with an image to give focus to your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with text",
+      "category": "Image"
+    }
+  ]
+}
+{% endschema %}

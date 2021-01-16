@@ -1,0 +1,255 @@
+{%- assign blog = blogs[section.settings.blog] -%}
+
+{% case section.settings.colors %}
+  {% when 'white' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--white">
+  {% when 'light' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--light">
+  {% when 'accent' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--accent">
+  {% when 'dark' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--dark">
+{% endcase %}
+
+<div class="wrapper show-on-scroll">
+
+<div class="homepage-indiv-section-wrapper">
+	<div class="sitewide--title-wrapper">
+		<h2 class="homepage-sections--title">{{ section.settings.title | escape }}</h2>
+	</div>
+
+  {% if section.settings.richtext != '' %}
+  <div class="grid">
+    <div class="grid__item large--one-half push--large--one-quarter">
+      <div class="homepage-sections--description">{{ section.settings.richtext }}</div>
+    </div>
+  </div>
+  {% endif %}
+
+	<div class="grid medium--hide small--hide">
+
+		{% unless blog.empty? %}
+
+			{% for article in blog.articles limit: section.settings.post_limit %}
+
+				{% case section.settings.post_limit %}
+					{% when 1 %}
+						<div class="grid__item large--one-half push--large--one-quarter">
+					{% when 2 %}
+						<div class="grid__item large--one-half">
+					{% when 3 %}
+						<div class="grid__item large--one-third">
+					{% when 4 %}
+						<div class="grid__item large--one-quarter">
+				{% endcase %}
+
+				{% if article.image %}
+					<div class="article-image">
+						<a href="{{ article.url }}">
+							{% include 'responsive-image' with article.image, alt: article.title %}
+						</a>
+					</div>
+				{% endif %}
+
+        {% if section.settings.blog_show_date %}
+				    <time class="homepage-blog--date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | time_tag: format: 'month_day_year' }}</time>
+        {% endif %}
+				<h3 class="homepage-blog--title"><a href="{{ article.url }}">{{ article.title }}</a></h3>
+
+				<div class="rte">
+					{% if article.excerpt.size > 0 %}
+						{{ article.excerpt }}
+					{% else %}
+						<p>{{ article.content | strip_html | truncatewords: 20 }}</p>
+					{% endif %}
+				</div>
+
+				</div>
+
+			{% endfor %}
+
+		{% else %}
+
+		      <div class="row">
+		        {% for i in (1..section.settings.post_limit) %}
+		          {% case section.settings.post_limit %}
+		          	{% when 1 %}
+		          		<div class="grid__item large--one-half push--large--one-quarter">
+		          	{% when 2 %}
+		          		<div class="grid__item large--one-half">
+		          	{% when 3 %}
+		          		<div class="grid__item large--one-third">
+		          	{% when 4 %}
+		          		<div class="grid__item large--one-quarter">
+		          {% endcase %}
+
+      					<div class="article-image">
+      						{{ 'image' | placeholder_svg_tag: 'icon icon--placeholder' }}
+      					</div>
+
+		            <div class="blog-title-wrapper{% if article.image %} article-image-in-header{% endif %}">
+                  {% if section.settings.blog_show_date %}
+		            	   <time class="homepage-blog--date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">December 25, 2016</time>
+                  {% endif %}
+		            	<div class="blog-title--divider"></div>
+		            	<h3 class="homepage-blog--title">{{ 'general.onboarding.blog_title' | t }}</h3>
+		            </div>
+
+		            <div class="rte home-blog-excerpt">
+		              {{ 'general.onboarding.blog_excerpt' | t }}
+		            </div>
+
+		         </div>
+		        {% endfor %}
+		        </div>
+
+		{% endunless %}
+
+	</div>
+
+	<div class="homepage-blog-mobile owl-carousel large--hide">
+
+		{% unless blog.empty? %}
+
+			{% for article in blog.articles limit: section.settings.post_limit %}
+
+			<div>
+
+				<div class="grid__item">
+
+				{% if article.image %}
+					<div class="article-image">
+						<a href="{{ article.url }}">
+							{% include 'responsive-image' with article.image, alt: article.title %}
+						</a>
+					</div>
+				{% endif %}
+
+					<time class="homepage-blog--date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
+					<h3 class="homepage-blog--title"><a href="{{ article.url }}">{{ article.title }}</a></h3>
+
+					<div class="rte">
+					{% if article.excerpt.size > 0 %}
+						{{ article.excerpt }}
+					{% else %}
+						<p>{{ article.content | strip_html | truncatewords: 20 }}</p>
+					{% endif %}
+					</div>
+
+				</div>
+
+			</div>
+
+		{% endfor %}
+
+	{% else %}
+
+	        {% for i in (1..section.settings.post_limit) %}
+	          {% case section.settings.post_limit %}
+	          	{% when 1 %}
+	          		<div class="grid__item">
+	          	{% when 2 %}
+	          		<div class="grid__item">
+	          	{% when 3 %}
+	          		<div class="grid__item">
+	          	{% when 4 %}
+	          		<div class="grid__item">
+	          {% endcase %}
+
+	            <div class="blog-title-wrapper{% if article.image %} article-image-in-header{% endif %}">
+	            	<time class="homepage-blog--date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">December 25, 2016</time>
+	            	<div class="blog-title--divider"></div>
+	            	<h3 class="homepage-blog--title">{{ 'general.onboarding.blog_title' | t }}</h3>
+	            </div>
+
+	            <div class="rte home-blog-excerpt">
+	              {{ 'general.onboarding.blog_excerpt' | t }}
+	            </div>
+
+	         </div>
+	        {% endfor %}
+
+	{% endunless %}
+
+	</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% schema %}
+{
+  "name": "Blog posts",
+  "class": "blog-posts-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "colors",
+      "label": "Color scheme",
+      "default": "white",
+      "options": [
+        {
+          "value": "white",
+          "label": "Minimal"
+        },
+        {
+          "value": "light",
+          "label": "Light"
+        },
+        {
+          "value": "accent",
+          "label": "Feature"
+        },
+        {
+          "value": "dark",
+          "label": "Dark"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "From the blog"
+    },
+    {
+      "type": "richtext",
+      "id": "richtext",
+      "label": "Description",
+      "info": "Optional"
+    },
+    {
+      "id": "blog",
+      "type": "blog",
+      "label": "Blog"
+    },
+    {
+      "type": "range",
+      "id": "post_limit",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "label": "Posts",
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "blog_show_date",
+      "label": "Show date",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog posts",
+      "category": "Blog",
+      "settings": {
+        "blog": "News",
+        "post_limit": 3
+      }
+    }
+  ]
+}
+{% endschema %}

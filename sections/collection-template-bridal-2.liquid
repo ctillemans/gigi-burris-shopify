@@ -1,0 +1,900 @@
+
+{% assign display-total-collection-products-number-rows = section.settings.collection-products-per-row %}
+{% assign display-total-collection-products-per-row = section.settings.collection-products-per-page %}
+
+{% case section.settings.collection-layout %}
+
+	{% when 'sidebar' %}
+		{% assign display-total-collection-products-total = display-total-collection-products-number-rows | times: display-total-collection-products-per-row %}
+
+	{% when 'central' %}
+		{% assign display-total-collection-products-total = display-total-collection-products-number-rows | times: display-total-collection-products-per-row | plus:2 %}
+
+	{% when 'none' %}
+		{% assign display-total-collection-products-total = display-total-collection-products-number-rows | times: display-total-collection-products-per-row %}
+
+{% endcase %}
+
+{% paginate collection.products by display-total-collection-products-total %}
+
+	{% case section.settings.collection-layout %}
+
+		{% when 'sidebar' %}
+
+			<div class="grid-uniform{% if section.settings.match-height %} products--match-height{% endif %}">
+
+			<div class="grid__item large--one-quarter collection-sidebar-wrapper collection-sidebar-mobile-wrapper">
+
+
+				{% if collection.image %}
+					{% include 'responsive-image' with collection.image, alt: collection.title, class: 'collection-page--sidebar-image' %}
+				{% endif %}
+
+				  {% if collection.description != blank %}
+				    <header class="section-header">
+							<div class="sitewide--title-wrapper">
+					      <h1 class="page--title"></h1>
+					    </div>
+                      
+				      <div class="rte rte--header collection-sidebar__description">
+				        {{ collection.description }}
+				      </div>
+				    </header>
+
+				  {% else %}
+
+						<div class="sitewide--title-wrapper">
+				      <h1 class="page--title"></h1>
+				    </div>
+
+				  {% endif %}
+
+					{% if section.settings.tags_enable %}
+
+							<div class="collection-sidebar-filter{% unless section.settings.tags_enable and section.settings.collection-show-sort-by %} mobile-filter--center{% endunless %}">
+								<label for="sort-by">{{ 'collections.filters.title_tags' | t }}</label>
+								<select class="needsclick collection-sidebar-filter-select coll-filter">
+									<option value="">{{ 'collections.filters.all_tags' | t }}</option>
+									{% for tag in collection.all_tags %}
+									{% if current_tags contains tag %}
+									<option value="{{ tag | handle }}" selected>{{ tag }}</option>
+									{% else %}
+									<option value="{{ tag | handle }}">{{ tag }}</option>
+									{% endif %}
+									{% endfor %}
+								</select>
+							</div>
+
+							<div id="link-to-tag-generic" style="display: none; visibility: hidden;">
+								{{ 'tag' | link_to_tag: 'tag' }}"
+							</div>
+							{% if collection.handle %}
+								<input type="hidden" id="link-to-collection" value="/collections/{{ collection.handle }}" />
+							{% elsif collection.products.first.type == collection.title %}
+								<input type="hidden" id="link-to-collection" value="{{ collection.title | url_for_type }}" />
+							{% elsif collection.products.first.vendor == collection.title %}
+								<input type="hidden" id="link-to-collection" value="{{ collection.title | url_for_vendor }}" />
+							{% endif %}
+
+					{% endif %}
+
+				  {% if section.settings.collection-show-sort-by %}
+						<div class="filter collection-sidebar-filter{% unless section.settings.tags_enable and section.settings.collection-show-sort-by %} mobile-filter--center{% endunless %}">
+						  <label for="sort-by">{{ 'collections.sorting.title' | t }}</label>
+						  <select id="sort-by" class="needsclick collection-sidebar-filter-select">
+						    <option value="manual">{{ 'collections.sorting.featured' | t }}</option>
+						    <option value="price-ascending">{{ 'collections.sorting.price_ascending' | t }}</option>
+						    <option value="price-descending">{{ 'collections.sorting.price_descending' | t }}</option>
+						    <option value="title-ascending">{{ 'collections.sorting.az' | t }}</option>
+						    <option value="title-descending">{{ 'collections.sorting.za' | t }}</option>
+						    <option value="created-ascending">{{ 'collections.sorting.date_ascending' | t }}</option>
+						    <option value="created-descending">{{ 'collections.sorting.date_descending' | t }}</option>
+						    <option value="best-selling">{{ 'collections.sorting.best_selling' | t }}</option>
+						  </select>
+						</div>
+
+						<script>
+						function load_sort_by() {
+						  Shopify.queryParams = {};
+						  if (location.search.length) {
+						    for (var aKeyValue, i = 0, aCouples = location.search.substr(1).split('&'); i < aCouples.length; i++) {
+						      aKeyValue = aCouples[i].split('=');
+						      if (aKeyValue.length > 1) {
+						        Shopify.queryParams[decodeURIComponent(aKeyValue[0])] = decodeURIComponent(aKeyValue[1]);
+						      }
+						    }
+						  }
+						  jQuery('#sort-by')
+						    .val('{{ collection.sort_by | default: collection.default_sort_by | escape }}')
+						    .bind('change', function() {
+						      Shopify.queryParams.sort_by = jQuery(this).val();
+						      location.search = jQuery.param(Shopify.queryParams).replace(/\+/g, '%20');
+						    });
+						}
+
+						load_sort_by();
+						document.addEventListener('shopify:section:load', load_sort_by);
+						</script>
+					{% endif %}
+
+
+			</div>
+
+			  <div class="grid__item large--three-quarters collection-main-body">
+
+			    {% comment %}
+			      Different markup if a collection description exists
+			    {% endcomment %}
+
+
+			    {% comment %}
+			      Use class grid-uniform to have evenly sized columns clear
+			      each other properly at each breakpoint.
+			    {% endcomment %}
+			    <div class="small--grid--full collection-main-body-inner collection-main-body-inner--sidebar">
+
+				{% if section.settings.collection-products-per-row == '4' %}
+					 {% assign grid_item_width = 'large--one-quarter medium--one-half small--one-half wow fadeInUp' %}
+				{% else %}
+					 {% assign grid_item_width = 'large--one-third medium--one-half small--one-half wow fadeInUp' %}
+				{% endif %}
+
+			      {% for product in collection.products %}
+
+			        {% comment %}
+  Set the default grid_item_width if no variable is set
+{% endcomment %}
+{% unless grid_item_width %}
+  {% assign grid_item_width = 'large--one-third medium--one-half wow fadeInUp' %}
+{% endunless %}
+
+{% comment %}
+  Check if the product is on sale and set a variable to be used below.
+{% endcomment %}
+{% assign on_sale = false %}
+{% if product.compare_at_price > product.price %}
+  {% assign on_sale = true %}
+{% endif %}
+
+{% comment %}
+  Check if the product is sold out and set a variable to be used below.
+{% endcomment %}
+{% assign sold_out = true %}
+{% if product.available %}
+  {% assign sold_out = false %}
+{% endif %}
+
+<div class="grid__item {{ grid_item_width }}">
+
+	{% include 'grid-view-item' %}
+
+</div>
+
+
+			      {% else %}
+
+			      {% if collection.handle == 'all' and collection.all_vendors.size == 0 and collection.all_types.size == 0 %}
+
+			          <div class="grid__item">
+
+								  <div class="grid grid--uniform">
+								    {% for i in (1..8) %}
+								      <div class="grid__item {{ grid_item_width }}">
+								        <div class="grid-view-item">
+								          <a href="#" class="grid-view-item__link">
+								            <div class="grid-view-item__image">
+								              {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+								              {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+								            </div>
+								            <div class="h4 grid-view-item__title">{{ 'homepage.onboarding.product_title' | t }}</div>
+								            <div class="grid-view-item__meta">
+								              <span class="product-price__price">$19.99</span>
+								            </div>
+								          </a>
+								        </div>
+								      </div>
+								    {% endfor %}
+								  </div>
+								</div>
+
+			        {% else %}
+
+			          {% comment %}
+			            If collection exists but is empty, display message
+			          {% endcomment %}
+			          <div class="grid__item">
+			            <p>{{ 'collections.general.no_matches' | t }}</p>
+			          </div>
+
+			        {% endif %}
+
+			      {% endfor %}
+
+			    </div>
+
+			  </div>
+
+			</div>
+
+		{% when 'central' %}
+
+			<div>
+			  <div class="collection-main-body">
+
+			  	<div class="grid-uniform{% if section.settings.match-height %} products--match-height{% endif %}">
+
+					<div class="large--hide">
+
+				<div class="grid__item small--one-whole medium--one-whole collection-central-description-block collection-central-description-block--mobile">
+
+					{% if collection.image %}
+						{% include 'responsive-image' with collection.image, alt: collection.title %}
+					{% endif %}
+
+					  {% if collection.description != blank %}
+					    <header class="section-header">
+					      <h1 class="collection-sidebar__title">{{ collection.title }}</h1>
+					      <div class="rte rte--header collection-sidebar__description">
+					        {{ collection.description }}
+					      </div>
+					    </header>
+
+					  {% else %}
+						<div class="sitewide--title-wrapper">
+							<h1 class="page--title">{{ collection.title }}</h1>
+						</div>
+					  {% endif %}
+
+				</div>
+
+				</div>
+
+			  	<div class="collection-main-central-header">
+
+
+
+			      {% for product in collection.products limit: 1 %}
+
+			        {% assign on_sale = false %}
+{% if product.compare_at_price > product.price %}
+  {% assign on_sale = true %}
+{% endif %}
+
+{% assign sold_out = true %}
+{% if product.available %}
+  {% assign sold_out = false %}
+{% endif %}
+
+{% if section.settings.collection-products-per-row == '4' %}
+	 {% assign grid_item_central_width = 'large--one-quarter medium--one-quarter small--one-whole wow fadeInUp' %}
+{% else %}
+	 {% assign grid_item_central_width = 'large--one-third medium--one-half small--one-whole wow fadeInUp' %}
+{% endif %}
+
+{% if section.settings.collection-products-per-row == '4' %}
+	 {% assign grid_item_central_desc_width = 'large--one-half medium--one-half small--one-whole wow fadeInUp' %}
+{% else %}
+	 {% assign grid_item_central_desc_width = 'large--one-third medium--one-half small--one-whole wow fadeInUp' %}
+{% endif %}
+
+						<div class="grid__item {{ grid_item_central_width }}">
+
+						    {% include 'grid-view-item-no-match' %}
+
+						</div>
+
+			      {% endfor %}
+
+			      <div class="grid__item {{ grid_item_central_desc_width }} collection-central-description-block medium--hide small--hide">
+
+			      	{% if collection.image %}
+			      		{% include 'responsive-image' with collection.image, alt: collection.title %}
+			      	{% endif %}
+
+			      	  {% if collection.description != blank %}
+			      	    <header class="section-header">
+			      	      <h2 class="collection-sidebar__title"></h2>
+			      	      <div class="rte rte--header collection-sidebar__description">
+			      	        {{ collection.description }}
+			      	      </div>
+			      	    </header>
+
+			      	  {% else %}
+								<div class="sitewide--title-wrapper">
+									<h1 class="page--title">{{ collection.title }}</h1>
+								</div>
+			      	  {% endif %}
+
+
+								{% if section.settings.tags_enable %}
+
+										<div class="collection-sidebar-filter">
+											<label for="sort-by">{{ 'collections.filters.title_tags' | t }}</label>
+											<select class="needsclick collection-sidebar-filter-select coll-filter">
+												<option value="">{{ 'collections.filters.all_tags' | t }}</option>
+												{% for tag in collection.all_tags %}
+												{% if current_tags contains tag %}
+												<option value="{{ tag | handle }}" selected>{{ tag }}</option>
+												{% else %}
+												<option value="{{ tag | handle }}">{{ tag }}</option>
+												{% endif %}
+												{% endfor %}
+											</select>
+										</div>
+
+										<div id="link-to-tag-generic" style="display: none; visibility: hidden;">
+											{{ 'tag' | link_to_tag: 'tag' }}"
+										</div>
+										{% if collection.handle %}
+											<input type="hidden" id="link-to-collection" value="/collections/{{ collection.handle }}" />
+										{% elsif collection.products.first.type == collection.title %}
+											<input type="hidden" id="link-to-collection" value="{{ collection.title | url_for_type }}" />
+										{% elsif collection.products.first.vendor == collection.title %}
+											<input type="hidden" id="link-to-collection" value="{{ collection.title | url_for_vendor }}" />
+										{% endif %}
+
+								{% endif %}
+
+				        {% if section.settings.collection-show-sort-by %}
+				        <div class="collection-sidebar-filter collection-central--sort-by">
+									<div>
+									  <label for="sort-by">{{ 'collections.sorting.title' | t }}</label>
+									  <select id="sort-by" class="needsclick collection-sidebar-filter-select">
+									    <option value="manual">{{ 'collections.sorting.featured' | t }}</option>
+									    <option value="price-ascending">{{ 'collections.sorting.price_ascending' | t }}</option>
+									    <option value="price-descending">{{ 'collections.sorting.price_descending' | t }}</option>
+									    <option value="title-ascending">{{ 'collections.sorting.az' | t }}</option>
+									    <option value="title-descending">{{ 'collections.sorting.za' | t }}</option>
+									    <option value="created-ascending">{{ 'collections.sorting.date_ascending' | t }}</option>
+									    <option value="created-descending">{{ 'collections.sorting.date_descending' | t }}</option>
+									    <option value="best-selling">{{ 'collections.sorting.best_selling' | t }}</option>
+									  </select>
+									</div>
+									<script>
+									function load_sort_by() {
+									  Shopify.queryParams = {};
+									  if (location.search.length) {
+									    for (var aKeyValue, i = 0, aCouples = location.search.substr(1).split('&'); i < aCouples.length; i++) {
+									      aKeyValue = aCouples[i].split('=');
+									      if (aKeyValue.length > 1) {
+									        Shopify.queryParams[decodeURIComponent(aKeyValue[0])] = decodeURIComponent(aKeyValue[1]);
+									      }
+									    }
+									  }
+									  jQuery('#sort-by')
+									    .val('{{ collection.sort_by | default: collection.default_sort_by | escape }}')
+									    .bind('change', function() {
+									      Shopify.queryParams.sort_by = jQuery(this).val();
+									      location.search = jQuery.param(Shopify.queryParams).replace(/\+/g, '%20');
+									    });
+									}
+
+									load_sort_by();
+									document.addEventListener('shopify:section:load', load_sort_by);
+									</script>
+				        </div>
+				        {% endif %}
+
+				  </div>
+
+			      {% for product in collection.products limit: 1 offset:1 %}
+
+			        {% assign on_sale = false %}
+{% if product.compare_at_price > product.price %}
+  {% assign on_sale = true %}
+{% endif %}
+
+{% assign sold_out = true %}
+{% if product.available %}
+  {% assign sold_out = false %}
+{% endif %}
+
+<div class="grid__item {{ grid_item_central_width }}">
+
+    {% include 'grid-view-item-no-match' %}
+
+</div>
+
+
+			      {% endfor %}
+
+
+
+			   </div>
+
+			    {% comment %}
+			      Use class grid-uniform to have evenly sized columns clear
+			      each other properly at each breakpoint.
+			    {% endcomment %}
+			    <div class="collection-main-body-inner">
+
+				{% if section.settings.collection-products-per-row == '4' %}
+					 {% assign grid_item_width = 'large--one-quarter medium--one-half small--one-half wow fadeInUp' %}
+				{% else %}
+					 {% assign grid_item_width = 'large--one-third medium--one-half small--one-half wow fadeInUp' %}
+				{% endif %}
+
+			      {% for product in collection.products offset:2 %}
+
+			        {% comment %}
+  Set the default grid_item_width if no variable is set
+{% endcomment %}
+{% unless grid_item_width %}
+  {% assign grid_item_width = 'large--one-third medium--one-half wow fadeInUp' %}
+{% endunless %}
+
+{% comment %}
+  Check if the product is on sale and set a variable to be used below.
+{% endcomment %}
+{% assign on_sale = false %}
+{% if product.compare_at_price > product.price %}
+  {% assign on_sale = true %}
+{% endif %}
+
+{% comment %}
+  Check if the product is sold out and set a variable to be used below.
+{% endcomment %}
+{% assign sold_out = true %}
+{% if product.available %}
+  {% assign sold_out = false %}
+{% endif %}
+
+<div class="grid__item {{ grid_item_width }}">
+
+    {% include 'grid-view-item' %}
+
+</div>
+
+
+			      {% else %}
+
+			        {% if collection.handle == 'all' and collection.all_vendors.size == 0 and collection.all_types.size == 0 %}
+
+			          <div class="grid__item">
+  <div class="grid grid--uniform">
+    {% for i in (1..8) %}
+      <div class="grid__item {{ grid_item_width }}">
+        <div class="grid-view-item">
+          <a href="#" class="grid-view-item__link">
+            <div class="grid-view-item__image">
+              {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+              {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+            <div class="h4 grid-view-item__title">{{ 'homepage.onboarding.product_title' | t }}</div>
+            <div class="grid-view-item__meta">
+              <span class="product-price__price">$19.99</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+			        {% endif %}
+
+			      {% endfor %}
+
+			    </div>
+
+				</div>
+
+			  </div>
+			</div>
+
+		{% when 'none' %}
+
+			<div class="collection-style--none">
+			  <div class="collection-main-body{% if section.settings.match-height %} products--match-height{% endif %}">
+
+					<div class="sitewide--title-wrapper">
+						<h2 class="homepage-sections--title"></h2>
+					</div>
+<br>
+                <div id="shopify-section-bridal-blog-template" class="shopify-section">
+    <div style="text-align: center;margin:-10px 0px 10px 0px;">
+    <h6 style="“font-size:" 12px;="" text-transform:="" uppercase;”="">Beyond the Veil: Accessories for the Nonconformist Bride.</h6> Gigi Burris’ playful creations reimagine tried and true Bridal accessories</div>
+</div>             
+           <!-- /templates/blog.liquid -->
+{% comment %}
+
+  Loop through a defined number of articles with the 'paginate' tag.
+  Don't forget to close the tag after your loop.
+
+{% endcomment %}
+                  {% assign blog = blogs.bridal %}
+
+{% paginate blog.articles by 7 %}
+
+{% comment %}
+  This template is also used for listing out articles of a specific tag.
+  You can change layouts or styles by checking if current_tags is true.
+{% endcomment %}
+<div class="grid blog-main--wrapper"style="width:100%; margin:1px 1px 1px 1px;padding:10px 10px 0px 10px; ">
+
+<div class="sitewide--title-wrapper">
+
+  <div class="grid__item large--one-whole" style="text-align: center; margin: 0px 0px 0px 0px; padding:0px 0px 0px 0px;">
+
+    {% comment %}
+      Loop through each article in your blog. This is limited to what you set for pagination above.
+
+      For more info on article liquid tags:
+        - http://docs.shopify.com/themes/liquid-variables/article
+    {% endcomment %}
+
+    {% for article in blog.articles %}
+
+      <div class="article--indiv grid"style="width:160px; display:inline-block;margin:10px; ">
+
+      	
+
+      	<div>
+
+	         <div style="width:160px;height:200px;border: 3px solid black; box-shadow: 1px 4px 6px rgba(0, 0, 0, .5);overflow:hidden;margin: 0px 0px 20px 0px;">{% if article.image %}
+	         <a class="article__featured-image" href="{{ article.url }}">
+	            {% include 'responsive-image' with article.image, alt: article.title %}
+	          </a>
+	        {% endif %}
+          </div>
+          <div style="height:33px; overflow: hidden;">
+   	        <h6 style="text-align:center;font-size:12px;"><a href="{{ article.url }}">{{ article.title }}</a></h6>
+          </div>
+<!--- <p style="text-align:center;"><time class="indiv-post-time" datetime="{{ article.published_at | date: '%B %Y' }}">{{ article.published_at | date: '%B %Y' }}</time></p> ---!>
+
+	        {% comment %}
+	          Add a surrounding div with class 'rte' to anything that will come from the rich text editor.
+	          Since this is just a listing page, you can either use the excerpt or truncate the full article.
+	        {% endcomment %}
+         
+		
+</div>
+      </div>
+
+      {% unless forloop.last %}{% endunless %}
+
+    {% endfor %}
+
+  </div>
+
+    
+<br>
+  <div style="text-align: center;margin:-10px 0px 10px 0px;">
+  <h6 style="“font-size:" 12px;="" text-transform:="" uppercase;”="">Seek Inspiration from Real Bridal Celebrations </h6>
+
+    <a href="https://gigiburris.com/blogs/bridal" class="homepage-featured-box-btn" style="text-decoration: none;margin:10px;text-align: center;padding:10px 10px 8px 10px;">View More</a>
+    </div>
+<br><br>
+
+  <div class="grid__item large--one-whole">
+	    
+
+	</div>
+
+</div>
+
+{% endpaginate %}     
+                
+                
+</div>  
+{% if section.settings.tags_enable or section.settings.collection-show-sort-by %}
+					<div class="collection-none-sidebar-wrapper">
+
+					{% if section.settings.tags_enable %}
+
+							<div class="collection-sidebar-filter">
+								<label for="sort-by">{{ 'collections.filters.title_tags' | t }}</label>
+								<select class="needsclick collection-sidebar-filter-select coll-filter">
+									<option value="">{{ 'collections.filters.all_tags' | t }}</option>
+									{% for tag in collection.all_tags %}
+									{% if current_tags contains tag %}
+									<option value="{{ tag | handle }}" selected>{{ tag }}</option>
+									{% else %}
+									<option value="{{ tag | handle }}">{{ tag }}</option>
+									{% endif %}
+									{% endfor %}
+								</select>
+							</div>
+
+							<div id="link-to-tag-generic" style="display: none; visibility: hidden;">
+								{{ 'tag' | link_to_tag: 'tag' }}"
+							</div>
+							{% if collection.handle %}
+								<input type="hidden" id="link-to-collection" value="/collections/{{ collection.handle }}" />
+							{% elsif collection.products.first.type == collection.title %}
+								<input type="hidden" id="link-to-collection" value="{{ collection.title | url_for_type }}" />
+							{% elsif collection.products.first.vendor == collection.title %}
+								<input type="hidden" id="link-to-collection" value="{{ collection.title | url_for_vendor }}" />
+							{% endif %}
+
+					{% endif %}
+
+				{% if section.settings.collection-show-sort-by %}
+							<div class="collection-sidebar-filter">
+							  <label for="sort-by">{{ 'collections.sorting.title' | t }}</label>
+							  <select id="sort-by" class="needsclick collection-sidebar-filter-select">
+							    <option value="manual">{{ 'collections.sorting.featured' | t }}</option>
+							    <option value="price-ascending">{{ 'collections.sorting.price_ascending' | t }}</option>
+							    <option value="price-descending">{{ 'collections.sorting.price_descending' | t }}</option>
+							    <option value="title-ascending">{{ 'collections.sorting.az' | t }}</option>
+							    <option value="title-descending">{{ 'collections.sorting.za' | t }}</option>
+							    <option value="created-ascending">{{ 'collections.sorting.date_ascending' | t }}</option>
+							    <option value="created-descending">{{ 'collections.sorting.date_descending' | t }}</option>
+							    <option value="best-selling">{{ 'collections.sorting.best_selling' | t }}</option>
+							  </select>
+							</div>
+							<script>
+							function load_sort_by() {
+							  Shopify.queryParams = {};
+							  if (location.search.length) {
+							    for (var aKeyValue, i = 0, aCouples = location.search.substr(1).split('&'); i < aCouples.length; i++) {
+							      aKeyValue = aCouples[i].split('=');
+							      if (aKeyValue.length > 1) {
+							        Shopify.queryParams[decodeURIComponent(aKeyValue[0])] = decodeURIComponent(aKeyValue[1]);
+							      }
+							    }
+							  }
+							  jQuery('#sort-by')
+							    .val('{{ collection.sort_by | default: collection.default_sort_by | escape }}')
+							    .bind('change', function() {
+							      Shopify.queryParams.sort_by = jQuery(this).val();
+							      location.search = jQuery.param(Shopify.queryParams).replace(/\+/g, '%20');
+							    });
+							}
+
+							load_sort_by();
+							document.addEventListener('shopify:section:load', load_sort_by);
+							</script>
+				{% endif %}
+
+			</div>
+
+			{% endif %}
+
+			    {% comment %}
+			      Use class grid-uniform to have evenly sized columns clear
+			      each other properly at each breakpoint.
+			    {% endcomment %}
+			    <div class="grid-uniform collection-main-body-inner">
+
+				{% if section.settings.collection-products-per-row == '4' %}
+					 {% assign grid_item_width = 'large--one-quarter medium--one-half wow fadeInUp' %}
+				{% else %}
+					 {% assign grid_item_width = 'large--one-third medium--one-half wow fadeInUp' %}
+				{% endif %}
+
+			      {% for product in collection.products %}
+
+			        {% comment %}
+  Set the default grid_item_width if no variable is set
+{% endcomment %}
+{% unless grid_item_width %}
+  {% assign grid_item_width = 'large--one-third medium--one-half wow fadeInUp' %}
+{% endunless %}
+
+{% comment %}
+  Check if the product is on sale and set a variable to be used below.
+{% endcomment %}
+{% assign on_sale = false %}
+{% if product.compare_at_price > product.price %}
+  {% assign on_sale = true %}
+{% endif %}
+
+{% comment %}
+  Check if the product is sold out and set a variable to be used below.
+{% endcomment %}
+{% assign sold_out = true %}
+{% if product.available %}
+  {% assign sold_out = false %}
+{% endif %}
+
+<div class="grid__item {{ grid_item_width }}">
+
+    {% include 'grid-view-item' %}
+
+</div>
+
+
+			      {% else %}
+
+			        {% if collection.handle == 'all' and collection.all_vendors.size == 0 and collection.all_types.size == 0 %}
+
+			          <div class="grid__item">
+  <div class="grid grid--uniform">
+    {% for i in (1..8) %}
+      <div class="grid__item {{ grid_item_width }}">
+        <div class="grid-view-item">
+          <a href="#" class="grid-view-item__link">
+            <div class="grid-view-item__image">
+              {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+              {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+            <div class="h4 grid-view-item__title">{{ 'homepage.onboarding.product_title' | t }}</div>
+            <div class="grid-view-item__meta">
+              <span class="product-price__price">$19.99</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+			        {% else %}
+
+			          {% comment %}
+			            If collection exists but is empty, display message
+			          {% endcomment %}
+			          <div class="grid__item">
+			            <p>{{ 'collections.general.no_matches' | t }}</p>
+			          </div>
+
+			        {% endif %}
+
+			      {% endfor %}
+
+			    </div>
+
+			  </div>
+			</div>
+
+	{% endcase %}
+
+	{% if paginate.pages > 1 %}
+{% if section.settings.enable_infinite_scrolling %}
+<div style="display: none" class="pagination-loading">
+    <i class="fa fa-circle-o-notch fa-spin fa-fw"></i>
+    <span class="sr-only">Loading...</span>
+</div>
+{% endif %}
+
+<div class="pagination {% if section.settings.enable_infinite_scrolling %}pagination-infinite{% endif %}">
+
+  <ul>
+    {% if paginate.previous %}
+      <li class="pagination-arrow"><a href="{{ paginate.previous.url }}"><i class="fa fa-chevron-left"></i></a></li>
+    {% else %}
+      <li class="prev disabled"><a href="#" onclick="return false;">&laquo;</a></li>
+    {% endif %}
+
+    {% for part in paginate.parts %}
+      {% if part.is_link %}
+        <li class="pagination-number">{{ part.title | link_to: part.url }}</li>
+      {% else %}
+        {% if part.title == '&hellip;' %}
+        <li class="ellipsis">{{ part.title }}</li>
+        {% else %}
+        <li class="active pagination-number">{{ part.title | link_to: part.url }}</li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if paginate.next %}
+      <li class="pagination-arrow pagination-next"><a href="{{ paginate.next.url }}"><i class="fa fa-chevron-right"></i></a></li>
+    {% else %}
+      <li class="next disabled"><a href="#" onclick="return false;">&raquo;</a></li>
+    {% endif %}
+  </ul>
+
+</div>
+{% endif %}
+
+{% endpaginate %}
+
+{% schema %}
+{
+  "name": "Collection pages",
+  "settings": [
+	{
+	  "type": "select",
+	  "id": "collection-layout",
+	  "label": "Layout",
+	  "options": [
+	    {
+	      "value": "central",
+	      "label": "Collection description centered"
+	    },
+	    {
+	      "value": "sidebar",
+	      "label": "Collection description in sidebar"
+	    },
+	    {
+	      "value": "none",
+	      "label": "Hide collection details"
+	    }
+	  ],
+	  "default": "sidebar"
+	},
+	{
+		"type": "checkbox",
+		"id": "collection-show-sort-by",
+		"label": "Enable sorting",
+		"default": true
+	},
+	{
+		"type": "checkbox",
+		"id": "tags_enable",
+		"label": "Enable tag filtering",
+		"default": true
+	},
+	{
+    "type": "radio",
+    "id": "collection-products-per-row",
+    "label": "Number of products per row",
+		"options": [
+	    {
+	      "value": "3",
+	      "label": "3"
+	    },
+	    {
+	      "value": "4",
+	      "label": "4"
+	    }
+	  ],
+    "default": "4"
+	},
+	{
+		"type": "range",
+		"id": "collection-products-per-page",
+		"min": 1,
+		"max": 10,
+		"step": 1,
+		"label": "Number of rows",
+		"default": 4
+	},
+	{
+	  "type": "checkbox",
+	  "id": "enable_infinite_scrolling",
+	  "label": "Enable infinite scrolling",
+	  "default": false
+	},
+	{
+		"type": "checkbox",
+		"id": "quick_shop_enable",
+		"label": "Enable quick shop",
+		"default": false
+	},
+	{
+		"type": "checkbox",
+		"id": "hover-effect",
+		"label": "Enable hover effect",
+		"default": false,
+		"info": "Shows your products second image on hover"
+	},
+	{
+		"type": "checkbox",
+		"id": "show-vendor",
+		"label": "Show vendor",
+		"default": false
+	},
+	{
+		"type": "header",
+		"content": "Auto-height images"
+	},
+	{
+		"type": "paragraph",
+		"content": "Set all of your images to be the same height"
+	},
+	{
+		"type": "checkbox",
+		"id": "match-height",
+		"label": "Enable auto-height",
+		"default": false
+	},
+	{
+		"type": "header",
+		"content": "Reviews"
+	},
+	{
+		"type": "checkbox",
+		"id": "show_reviews",
+		"label": "Enable",
+		"default": false
+	},
+	{
+		"type": "paragraph",
+		"content": "You will need to install Shopify's [Product Reviews app](https://apps.shopify.com/product-reviews) before enabling this option."
+	}
+  ]
+}
+{% endschema %}

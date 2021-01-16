@@ -1,0 +1,71 @@
+<div class="wrapper">
+  <div style= "width:100%; margin-top:-100px; background-size:100%; position:absolute; z-index:10; height:472px;">
+    <img src="//cdn.shopify.com/s/files/1/1409/0762/t/1/assets/white-bar-background.png?12461486893030838611" >
+</div>
+</div>
+
+{% schema %}
+  {
+    "name": "Custom HTML",
+    "class": "index-section",
+    "max_blocks": 4,
+    "blocks": [
+      {
+        "type": "html",
+        "name": "Custom HTML",
+        "settings": [
+          {
+            "type": "html",
+            "id": "code",
+            "label": "HTML",
+            "default": "<div style='text-align:center; padding: 0px 0;'><h2>Use HTML to format your text so it can be easily read.</h2>This text can be used to share information about your brand with customers.</div>"
+          },
+          {
+            "type": "select",
+            "id": "width",
+            "label": "Container width",
+            "default": "100%",
+            "options": [
+              {
+                "value": "25%",
+                "label": "25%"
+              },
+              {
+                "value": "33%",
+                "label": "33%"
+              },
+              {
+                "value": "50%",
+                "label": "50%"
+              },
+              {
+                "value": "66%",
+                "label": "66%"
+              },
+              {
+                "value": "75%",
+                "label": "75%"
+              },
+              {
+                "value": "100%",
+                "label": "100%"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Custom HTML",
+        "category": "Advanced layout",
+        "blocks": [
+          {
+            "type": "html"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+

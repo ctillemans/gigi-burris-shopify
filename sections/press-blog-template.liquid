@@ -1,0 +1,153 @@
+<!-- /templates/blog.liquid -->
+{% comment %}
+
+  Loop through a defined number of articles with the 'paginate' tag.
+  Don't forget to close the tag after your loop.
+
+{% endcomment %}
+
+{% paginate blog.articles by 21 %}
+
+{% comment %}
+  This template is also used for listing out articles of a specific tag.
+  You can change layouts or styles by checking if current_tags is true.
+{% endcomment %}
+<div class="grid blog-main--wrapper"style="width:100%; margin:1px 1px 1px 1px;padding:30px 10px 0px 10px; ">
+
+<div class="sitewide--title-wrapper">
+  {% if current_tags %}
+    <h1 class="page--title">{{ blog.title | link_to: blog.url }} | {{ current_tags.first }}</h1>
+  {% else %}
+    <h1 class="page--title">{{ blog.title }} <a href="{{ shop.url }}{{ blog.url }}.atom"></a></h1>
+  {% endif %}
+  <div style="text-align: center;margin:-10px 0px 10px 0px;">
+    <a href="https://gigiburris.com/blogs/press" class="homepage-featured-box-btn" style="text-decoration: none;margin:10px;width:100px;text-align: center;padding:10px 0px 8px 0px;">All</a>
+    <a href="https://gigiburris.com/blogs/press/tagged/print" class="homepage-featured-box-btn" style="text-decoration: none;margin:10px;width:100px;text-align: center;padding:10px 0px 8px 0px;">Print</a>
+  <a href="https://gigiburris.com/blogs/press/tagged/online" class="homepage-featured-box-btn" style="text-decoration: none;margin:10px;width:100px;text-align: center;padding:10px 0px 8px 0px;">Online</a>
+<a href="https://gigiburris.com/blogs/press/tagged/celebrity" class="homepage-featured-box-btn" style="text-decoration: none;margin:10px;width:100px;text-align: center;padding:10px 0px 8px 0px;">Seen On</a></div>
+</div>
+<br>
+  <div class="grid__item large--one-whole" style="text-align: center; margin: 0px 0px 0px 0px; padding:0px 0px 0px 0px;">
+
+    {% comment %}
+      Loop through each article in your blog. This is limited to what you set for pagination above.
+
+      For more info on article liquid tags:
+        - http://docs.shopify.com/themes/liquid-variables/article
+    {% endcomment %}
+
+    {% for article in blog.articles %}
+
+      <div class="article--indiv grid"style="width:160px; display:inline-block;margin:10px; ">
+
+      	
+
+      	<div>
+
+	         <div style="width:160px;height:200px;border: 3px solid black; box-shadow: 1px 4px 6px rgba(0, 0, 0, .5);overflow:hidden;margin: 0px 0px 20px 0px;">{% if article.image %}
+	         <a class="article__featured-image" href="{{ article.url }}">
+	            {% include 'responsive-image' with article.image, alt: article.title %}
+	          </a>
+	        {% endif %}
+          </div>
+          <div style="height:33px; overflow: hidden;">
+   	        <h6 style="text-align:center;font-size:12px;"><a href="{{ article.url }}">{{ article.title }}</a></h6>
+          </div>
+<!--- <p style="text-align:center;"><time class="indiv-post-time" datetime="{{ article.published_at | date: '%B %Y' }}">{{ article.published_at | date: '%B %Y' }}</time></p> ---!>
+
+	        {% comment %}
+	          Add a surrounding div with class 'rte' to anything that will come from the rich text editor.
+	          Since this is just a listing page, you can either use the excerpt or truncate the full article.
+	        {% endcomment %}
+         
+		
+</div>
+      </div>
+
+      {% unless forloop.last %}{% endunless %}
+
+    {% endfor %}
+
+  </div>
+
+ 
+
+  <div class="grid__item large--one-whole">
+	    {% if paginate.pages > 1 %}
+<div class="pagination">
+
+  <ul>
+    {% if paginate.previous %}
+      <li class="pagination-arrow"><a href="{{ paginate.previous.url }}"><i class="fa fa-chevron-left"></i></a></li>
+    {% else %}
+      <li class="prev disabled"><a href="#" onclick="return false;">&laquo;</a></li>
+    {% endif %}
+
+    {% for part in paginate.parts %}
+      {% if part.is_link %}
+        <li class="pagination-number">{{ part.title | link_to: part.url }}</li>
+      {% else %}
+        {% if part.title == '&hellip;' %}
+        <li class="ellipsis">{{ part.title }}</li>
+        {% else %}
+        <li class="active pagination-number">{{ part.title | link_to: part.url }}</li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if paginate.next %}
+      <li class="pagination-arrow"><a href="{{ paginate.next.url }}"><i class="fa fa-chevron-right"></i></a></li>
+    {% else %}
+      <li class="next disabled"><a href="#" onclick="return false;">&raquo;</a></li>
+    {% endif %}
+  </ul>
+
+</div>
+{% endif %}
+
+	</div>
+
+</div>
+
+{% endpaginate %}
+
+{% schema %}
+{
+  "name": "Blog pages",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_author_name",
+      "label": "Show author name",
+      "default": true
+    },
+    {
+      "type":      "header",
+      "content":   "Sidebar"
+    },
+    {
+      "type": "image_picker",
+      "id": "blog-sidebar-image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "blog-sidebar-link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_blog_tags",
+      "label": "Show tags",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_recent_posts",
+      "label": "Show 'Recent articles'",
+      "default": true
+    }
+  ]
+}
+{% endschema %}
+

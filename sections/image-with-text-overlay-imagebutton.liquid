@@ -1,0 +1,289 @@
+
+<div class="homepage-sections-wrapper
+
+{% case section.settings.colors %}
+  {% when 'white' %}
+    image-with-text-overlay-wrapper--white
+  {% when 'accent' %}
+    image-with-text-overlay-wrapper--accent
+  {% when 'dark' %}
+    image-with-text-overlay-wrapper--dark
+{% endcase %}
+
+{% case section.settings.textPosition %}
+  {% when 'left' %}
+    image-with-text-overlay-wrapper--textPosition-left
+  {% when 'center' %}
+    image-with-text-overlay-wrapper--textPosition-center
+  {% when 'right' %}
+    image-with-text-overlay-wrapper--textPosition-right
+{% endcase %}
+
+{% case section.settings.textAlignment %}
+  {% when 'left' %}
+    image-with-text-overlay-wrapper--textAlignment-left
+  {% when 'center' %}
+    image-with-text-overlay-wrapper--textAlignment-center
+  {% when 'right' %}
+    image-with-text-overlay-wrapper--textAlignment-right
+{% endcase %}
+
+">
+
+{% assign img_size = '2000x' %}
+
+{% if section.settings.image_height == 'original' %}
+
+
+{% if section.settings.image_overlay_opacity != 0 %}
+<style>
+    .image-with-text-overlay-wrapper .homepage-content--{{ section.id }}.homepage-content--image::before {
+        opacity: 0.{{ section.settings.image_overlay_opacity }};
+    }
+</style>
+{% endif %}
+
+{% else %}
+
+<style>
+  {% if section.settings.image != blank %}
+    {% capture selector %}.homepage-content--{{ section.id }} .img{% endcapture %}
+    {% include 'responsive-background-image' with section.settings.image, selector: selector %}
+
+    .homepage-content--{{ section.id }} .img {
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+  {% endif %}
+
+  {% if section.settings.image_overlay_opacity != 0 %}
+    .image-with-text-overlay-wrapper .homepage-content--{{ section.id }}.homepage-content--image::before {
+      opacity: 0.{{ section.settings.image_overlay_opacity }};
+    }
+  {% endif %}
+
+  .homepage-content--{{ section.id }} .img {
+    height: {{ section.settings.image_height }};
+  }
+
+  @media only screen and (min-width: 768px) {
+    .homepage-content--{{ section.id }} .rellax.img {
+      height: {{ section.settings.image_height | remove:'vw' | times:1.5 | append:'vw' }};
+      margin-top: {{ section.settings.image_height | remove:'vw' | times:-0.25 | append:'vw' }};
+    }
+  }
+
+  .parallax.parallax--{{ section.id }} {
+    height: {{ section.settings.image_height }};
+  }
+
+</style>
+
+<div>
+
+<div class="homepage-indiv-section-wrapper grid--full homepage-featured-content-wrapper">
+
+	{% capture image_layout %}
+		<div class="large--one-whole homepage-content--image homepage-content--{{ section.id }}">
+		    <div class="{% if section.settings.parallax %} parallax parallax--{{ section.id }}{% endif %}">
+			{% if section.settings.image != blank %}
+			    <div id="rellax--{{ section.id }}" class="img{% if section.settings.parallax %} rellax{% endif %}" data-rellax-percentage="0.5"></div>
+			{% else %}
+			    <div id="rellax--{{ section.id }}" class="placeholder-background img{% if section.settings.parallax %} rellax{% endif %}" data-rellax-percentage="0.5">
+				        {{ 'lifestyle-1' | placeholder_svg_tag: 'icon icon--placeholder' }}
+			    </div>
+			{% endif %}
+		    </div>
+		</div>
+	{% endcapture %}
+
+	{{ image_layout }}
+ {% if section.settings.title != blank or section.settings.text != blank or section.settings.button_label != blank %}
+<div style="width:200px;margin: 0% 0% 0% 45%;overflow:visible;">
+
+  	<div class="homepage-featured-content-box" style="width:80%;Margin:5% 10% 10% 10%;">
+      
+<style></style>
+      <div style="width:300px;float:right;margin:5% 10% 10% 10%;">
+        <p style="font-size:18px;">'Burris's work puts a twist in traditional techniques.' <br><br><br><img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/VOGUE_revista_-_logo.png?17682626572407825616" alt="Vogue" style="width:100px;"></p>
+              <div style="float:middle;">
+
+<a href="https://gigi-burris.myshopify.com/collections/pages/contact" class="homepage-featured-box-btn">
+  						Contact the Atelier
+  					</a></div>
+  
+
+              </div>                                                                                                    </div>
+</div>
+
+  
+  </div>
+ 
+
+  	</div>
+
+  {% endif %}
+
+</div>
+
+</div>
+
+{% endif %}
+
+</div>
+
+{% schema %}
+{
+  "name": "Image with text overlay",
+  "class": "image-with-text-overlay-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+    "type": "select",
+    "id": "image_height",
+    "label": "Section height",
+    "default": "40vw",
+    "options": [
+        {
+            "value": "30vw",
+            "label": "Small"
+        },
+        {
+            "value": "40vw",
+            "label": "Medium"
+        },
+        {
+            "value": "50vw",
+            "label": "Large"
+        },
+        {
+            "value": "original",
+            "label": "Original"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "image_overlay_opacity",
+      "min": 0,
+      "max": 95,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 35
+    },
+    {
+      "type": "checkbox",
+      "id": "parallax",
+      "label": "Enable parallax effect",
+      "default": true,
+      "info": "Parallax won't be visible when the 'Section height' is set to 'Original'"
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Image with Text Overlay"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Show large text over a featured image</p>"
+    },
+    {
+			"type": "select",
+			"id": "colors",
+			"label": "Text color",
+			"default": "white",
+			"options": [
+				{
+					"value": "white",
+					"label": "White"
+				},
+				{
+					"value": "accent",
+					"label": "Feature"
+				},
+				{
+					"value": "dark",
+					"label": "Dark"
+				}
+			]
+		},
+    {
+			"type": "select",
+			"id": "textPosition",
+			"label": "Text position",
+			"default": "center",
+			"options": [
+				{
+					"value": "left",
+					"label": "Left"
+				},
+				{
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "right",
+					"label": "Right"
+				}
+			]
+		},
+    {
+      "type": "select",
+      "id": "textAlignment",
+      "label": "Text alignment",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with text overlay",
+      "category": "Image"
+    }
+  ]
+}
+{% endschema %}

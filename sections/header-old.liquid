@@ -202,11 +202,9 @@
       </div>
     {% endif %}
   {% endcapture %}
-{% comment %} Beginning of header section  {% endcomment %}
-    <header class="site-header medium--hide small--hide{% if section.settings.sticky_header %} sticky-header sticky-header-transformed ui sticky{% endif %}{% if section.settings.logo-placement == 'above' %} logo_above{% endif %}{% if section.settings.overlay_header %} overlay-header{% endif %}{% if section.settings.dropdown_alignment == 'center' %} dropdown-alignment--center{% endif %}">
-      <div class="wrapper">
 
-      {% comment %} Left Logo section  {% endcomment %}
+    <header class="site-header medium--hide small--hide{% if section.settings.sticky_header %} sticky-header sticky-header-transformed ui sticky{% endif %}{% if section.settings.logo-placement == 'above' %} logo_above{% endif %}{% if section.settings.overlay_header %} overlay-header{% endif %}{% if section.settings.dropdown_alignment == 'center' %} dropdown-alignment--center{% endif %}" style="box-shadow: rgba(0, 0, 0, 0.2) 4px 6px 8px;">
+      <div class="wrapper">
 
         {% if section.settings.logo-placement == 'left' %}
 
@@ -220,8 +218,8 @@
 
 			<div class="top-links">
 
-				<ul class="site-image-nav" id="AccessibleNav" role="navigation">
-					{% include 'site-image-nav' %}
+				<ul class="site-nav" id="AccessibleNav" role="navigation">
+					{% include 'site-nav' %}
 				</ul>
 
 				<ul class="top-links--icon-links">
@@ -289,9 +287,9 @@
 
           <div class="top-links">
 
-              <ul class="site-image-nav" id="AccessibleNav" role="navigation">
+              <ul class="site-nav" id="AccessibleNav" role="navigation">
 
-                  {% include 'site-image-nav' %}
+                  {% include 'site-nav' %}
 
               </ul>
 
@@ -384,8 +382,8 @@
 
                 <div class="top-links">
 
-                    <ul class="site-image-nav" id="AccessibleNav" role="navigation">
-                        {% include 'site-image-nav' %}
+                    <ul class="site-nav" id="AccessibleNav" role="navigation">
+                        {% include 'site-nav' %}
                     </ul>
 
                 </div>

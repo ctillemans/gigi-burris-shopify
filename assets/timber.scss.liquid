@@ -2307,7 +2307,7 @@ header:not(.overlay-header) .site-header__logo-overlay-link {
   line-height: {{ settings.header_font_size }}px;
 }
 
-.top-links ul li{
+.top-links .top-links--icon-links li{
 	display: inline-block;
 	list-style-type: none;
   font-family: $navigationFontStack;
@@ -7433,11 +7433,18 @@ input#newsletter_submit[type="submit"]{
   }
 
   > li {
+    font-family: $navigationFontStack;
+    font-weight: $navigationFontWeight;
+    font-style: $navigationFontStyle;
+    text-transform:none;
     display: inline-block;
   }
 }
 
 .site-image-nav__link{
+  i{
+    float: right;
+  }
   display: block;
   text-decoration: none;
   padding: $gutter / 2;
@@ -7451,9 +7458,9 @@ input#newsletter_submit[type="submit"]{
 
 .site-image-nav__dropdown-menu {
   width: 100vw;
+  height: 80vh;
   background: white;
-  display: block!important;
-  visibility: hidden;
+  display: none;
   position: absolute;
   top: 71px;
   opacity: 0;
@@ -7466,7 +7473,8 @@ input#newsletter_submit[type="submit"]{
 .site-image-nav--has-dropdown{
   &:hover{
     .dropdown-menu{
-      visibility: visible;
+      display: block;
+      display: flex;
       opacity: 1;
       z-index: $zindexNavDropdowns;
     }
@@ -7475,23 +7483,31 @@ input#newsletter_submit[type="submit"]{
 
 .dropdown-menu__list{
   & li{
-    display: block;
+    display: flex;
   }
   position: relative;
   display: block;
-  width: 50%;
+}
+.site-image-nav--has-subdropdown{
+  position: relative;
+    &:hover{
+    .site-image-nav__subdropdown{
+      display: block;
+      opacity: 1;
+      z-index: $zindexNavDropdowns;
+    }
+  }
+
 }
 
-.site-image-nav__subdropdown{
-  display: block;
-  visibility: hidden;
+ul.site-image-nav__subdropdown{
+  padding-left: 2rem;
+  margin-left:0;
+  display: none;
   opacity: 0;
   position: absolute;
   left: 100%;
   top:0;
-  >li {
-    display: block;
-  }
 }
 
 .site-image-nav__list{
@@ -7499,6 +7515,15 @@ input#newsletter_submit[type="submit"]{
     display: block 
   }
 
+}
+
+.site-image-nav__menu-image{
+height: 100%;
+width: 50%;
+display: block;
+background: black;
+position: absolute;
+right: 0;
 }
 
 

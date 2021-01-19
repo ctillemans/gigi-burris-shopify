@@ -3,9 +3,24 @@
 
 {% for link in menu.links %} 
 
+<script>console.log( {{link.type|json}});</script>
+
   {% if link.links != blank %}
     <li class="site-image-nav--has-dropdown" aria-haspopup="true">
-      <a href="{{ link.url }}" class="site-image-nav__link">
+    {% comment %} TODO: build function that returns string to assign to linkImage {% endcomment %}
+    
+    {% assign linkType = link.type %}
+    {% case linkType %}
+      {% when 'collection_link' %}
+        {% assign collectionName = link.title | downcase %}
+        {%assign linkImage= collections.collectionName.image.src%}
+      {% else %}
+        {%assign linkImage= section.settings.shop_all_image%}
+    {% endcase %}
+  
+   
+
+      <a href="{{ link.url }}" data-imgsrc="{{ linkImage.src | collection_img_url: 'medium'}}" class="site-image-nav__link">
         {{ link.title }}
       </a> 
   
@@ -31,6 +46,11 @@
           {% endfor %}
         </ul>
         <div class="site-image-nav__menu-image"> 
+        {% capture props %}
+          style="width: 100%"
+          itemprop="navImage"
+        {% endcapture %}
+       {% include 'responsive-image' with section.settings.shop_all_image, alt: "alt", props: props %}
         </div>
       </div>
       

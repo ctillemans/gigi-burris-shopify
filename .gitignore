@@ -1,2 +1,5 @@
 config.yml
 variables
+.liquidrc
+.vscode 
+.vscode/

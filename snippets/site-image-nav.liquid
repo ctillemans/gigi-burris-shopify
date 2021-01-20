@@ -1,67 +1,74 @@
-
 {% assign menu = linklists[section.settings.main_linklist] %}
 
-{% for link in menu.links %} 
+{% for link in menu.links %}
+    {% if link.links != blank %}
+        <li aria-haspopup="true" class="site-image-nav__listItem--has-dropdown">
+            {% comment %} TODO: build function that returns string to assign to linkImage {% endcomment %}
 
-<script>console.log( {{link.type|json}});</script>
+            {% assign linkType = link.type %}
+            {% case linkType %}
+                {% when 'catalog_link' %}
+                    {%assign linkImage= section.settings.shop_all_image.src%}
+                {% when 'collection_link' %}
+                    {% assign collectionName = link.title | downcase %}
+                    {%assign linkImage= collections.collectionName.image%}
+                {% else %}
+                    {% comment %} TODO page case {% endcomment %}
+                    {%assign linkImage= section.settings.shop_all_image.src%}
+            {% endcase %}
+            <a href="{{ link.url }}" data-imgsrc="{{ linkImage.src | img_url: '1000x1000'}}" class="site-image-nav__link">
+                {{ link.title }}
+            </a>
+            <div class="site-image-nav__dropdown-menu dropdown-menu">
+                <ul class="site-image-nav__list dropdown-menu__list">
+                    {% for sub_link in link.links %}
+                        {% assign linkType = sub_link.type %}
+                        {% case linkType %}
+                            {% when 'catalog_link' %}
+                                {%assign linkImage= section.settings.shop_all_image%}
+                            {% when 'collection_link' %}
+                                {% assign linkCollection = sub_link.object%}
+                            {% else %}
+                                {% comment %} TODO page case {% endcomment %}
+                        {% endcase %}
 
-  {% if link.links != blank %}
-    <li class="site-image-nav--has-dropdown" aria-haspopup="true">
-    {% comment %} TODO: build function that returns string to assign to linkImage {% endcomment %}
-    
-    {% assign linkType = link.type %}
-    {% case linkType %}
-      {% when 'collection_link' %}
-        {% assign collectionName = link.title | downcase %}
-        {%assign linkImage= collections.collectionName.image.src%}
-      {% else %}
-        {%assign linkImage= section.settings.shop_all_image%}
-    {% endcase %}
-  
-   
 
-      <a href="{{ link.url }}" data-imgsrc="{{ linkImage.src | collection_img_url: 'medium'}}" class="site-image-nav__link">
-        {{ link.title }}
-      </a> 
-  
-      <div class="site-image-nav__dropdown-menu dropdown-menu">
-        <ul class="site-image-nav__list dropdown-menu__list">
-          {% for sub_link in link.links %}
-          {% if sub_link.levels > 0 %}
-              <li class="site-image-nav--has-subdropdown" aria-haspopup="true">
-                <a href="{{ sub_link.url }}" class="site-image-nav__link">{{ sub_link.title | escape }} <i class="fa fa-caret-right fa-lg" aria-hidden="true"></i></a>  
-                <ul class="site-image-nav__subdropdown">
-                  {% for sub_sub_link in sub_link.links %}
-                    <li>
-                      <a href="{{ sub_sub_link.url }}" class="site-image-nav__link">{{ sub_sub_link.title | escape }}</a>
-                    </li>
-                  {% endfor %} 
-                </ul>  
-              </li>        
-            {% else %} 
-              <li>
-                <a href="{{ sub_link.url }}" class="site-image-nav__link">{{ sub_link.title | escape }}</a>
-              </li>
-            {% endif %}
-          {% endfor %}
-        </ul>
-        <div class="site-image-nav__menu-image"> 
-        {% capture props %}
-          style="width: 100%"
-          itemprop="navImage"
-        {% endcapture %}
-       {% include 'responsive-image' with section.settings.shop_all_image, alt: "alt", props: props %}
-        </div>
-      </div>
-      
-    </li>
+                        {% if sub_link.levels > 0 %}
+                            <li aria-haspopup="true" class="site-image-nav__listItem--has-subdropdown">
+                                <a href="{{ sub_link.url }}" {% if linkCollection.image %} data-imgsrc="{{ linkCollection.image.src | collection_img_url: 'original'}}" {% endif %} class="site-image-nav__link">{{ sub_link.title | escape }}
+                                    <i aria-hidden="true" class="fa fa-caret-right fa-lg"></i>
+                                </a>
+                                <ul class="site-image-nav__subdropdown">
+                                    {% for sub_sub_link in sub_link.links %}
+                                        <li>
+                                            <a href="{{ sub_sub_link.url }}" class="site-image-nav__link">{{sub_sub_link.title | escape }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li aria-haspopup="true" class="site-image-nav__listItem">
+                                <a href="{{ sub_link.url }}" {% if linkCollection.image %} data-imgsrc="{{ linkCollection.image.src | collection_img_url: 'original'}}" {% endif %} class="site-image-nav__link">{{ sub_link.title | escape }}
+                                    {{collection1.title}}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <div class="site-image-nav__menu-image-container">
+                    <img class="site-image-nav__menu-image" src="{{ linkImage.src | img_url:"750X750" }}" data-src="{{ linkImage.url }}" data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]" data-aspectratio="{{ linkImage.aspect_ratio }}" data-sizes="auto" alt="{{ linkImage.title | escape }}">
+                    <!-- {% include 'responsive-image' with section.settings.shop_all_image, class:"menu-image" alt: "alt", props: props %} -->
+                </div>
+            </div>
+
+        </li>
 
     {% else %}
 
-    <li> 
-      <a href="{{ link.url }}" class="site-image-nav__link">{{ link.title }}</a>
-    </li> 
+        <li>
+            <a href="{{ link.url }}" class="site-image-nav__link">{{ link.title }}</a>
+        </li>
 
-  {% endif %}
+    {% endif %}
 
 {% endfor %}

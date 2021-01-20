@@ -2307,7 +2307,7 @@ header:not(.overlay-header) .site-header__logo-overlay-link {
   line-height: {{ settings.header_font_size }}px;
 }
 
-.top-links ul li{
+.top-links .top-links--icon-links li{
 	display: inline-block;
 	list-style-type: none;
   font-family: $navigationFontStack;
@@ -7412,4 +7412,124 @@ input#newsletter_submit[type="submit"]{
 }
 
 #preload { display: none; }
+
+
+
+/*====== New navigation styles ========*/
+
+{% comment %} .top-links ul.site-image-nav{
+	display: inline-block;
+	font-size: {{ settings.header_font_size }}px;
+  line-height: {{ settings.header_font_size }}px;
+} {% endcomment %}
+
+.site-image-nav {
+  cursor: default;
+  margin: 0 0 0 (-$gutter / 2);
+
+  li {
+    margin: 0;
+    display: block;
+  }
+
+  > li {
+    font-family: $navigationFontStack;
+    font-weight: $navigationFontWeight;
+    font-style: $navigationFontStyle;
+    text-transform:none;
+    display: inline-block;
+  }
+}
+
+.site-image-nav__link{
+  i{
+    float: right;
+  }
+  display: block;
+  text-decoration: none;
+  padding: $gutter / 2;
+  white-space: nowrap;
+  color: {{ settings.color_secondary_navigation }};
+  letter-spacing: 0.5px;
+  }
+
+
+
+
+.site-image-nav__dropdown-menu {
+  width: 100vw;
+  background: white;
+  display: none;
+  position: absolute;
+  top: 71px;
+  opacity: 0;
+  left: 0;
+  margin: 0;
+  padding-top: 1rem;
+  z-index: $zindexNavDropdowns;
+}
+
+
+.site-image-nav__listItem--has-dropdown{
+  &:hover{
+    .dropdown-menu{
+      display: block;
+      display: flex;
+      opacity: 1;
+      z-index: $zindexNavDropdowns;
+    }
+  }
+}
+
+.dropdown-menu__list{
+  & li{
+    display: flex;
+  }
+  position: relative;
+  display: block;
+}
+.site-image-nav__listItem--has-subdropdown{
+  position: relative;
+    &:hover{
+    .site-image-nav__subdropdown{
+      display: block;
+      opacity: 1;
+      z-index: $zindexNavDropdowns;
+    }
+  }
+
+}
+
+ul.site-image-nav__subdropdown{
+  padding-left: 0rem;
+  margin-left:0;
+  display: none;
+  opacity: 0;
+  position: absolute;
+  left: 100%;
+  top:0;
+}
+
+.site-image-nav__list{
+   li{
+    display: block 
+  }
+
+}
+
+.site-image-nav__menu-image-container{
+width: 50%;
+background: black;
+position: relative;
+margin-left: auto;
+overflow: hidden;
+img{
+  max-height: 80vh;
+  width: 100%;
+  object-fit: cover;
+}
+}
+
+
+
 

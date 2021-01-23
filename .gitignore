@@ -3,3 +3,4 @@ variables
 .liquidrc
 .vscode 
 .vscode/
+.DS_store

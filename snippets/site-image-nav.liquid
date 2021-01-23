@@ -1,56 +1,113 @@
 {% assign menu = linklists[section.settings.main_linklist] %}
 
+{{ 'menuNav.js' | asset_url | script_tag }}
+
 {% for link in menu.links %}
     {% if link.links != blank %}
         <li aria-haspopup="true" class="site-image-nav__listItem--has-dropdown">
             {% comment %} TODO: build function that returns string to assign to linkImage {% endcomment %}
 
             {% assign linkType = link.type %}
+            <script>console.log({{linkType | json}})</script>
+
             {% case linkType %}
                 {% when 'catalog_link' %}
                     {%assign linkImage= section.settings.shop_all_image.src%}
                 {% when 'collection_link' %}
-                    {% assign collectionName = link.title | downcase %}
+                    {% assign collectionName = link.handle | downcase %}
                     {%assign linkImage= collections.collectionName.image%}
+                {% when 'page_link' %}
+                    {% assign linkPage = link.object%}
+                    {% assign myimage = linkPage.handle | append:'.jpeg' %}
+                    <script>console.log({{myimage | json}})</script>
+                    {%assign linkImage=myimage%}
                 {% else %}
-                    {% comment %} TODO page case {% endcomment %}
                     {%assign linkImage= section.settings.shop_all_image.src%}
             {% endcase %}
-            <a href="{{ link.url }}" data-imgsrc="{{ linkImage.src | img_url: '1000x1000'}}" class="site-image-nav__link">
-                {{ link.title }}
-            </a>
+            {% if linkType == 'page_link' %}
+                <a href="{{ link.url }}" data-imgsrc="{{ linkImage| file_img_url: 'original'}}" class="site-image-nav__link">
+                    {{ link.title }}
+                </a>
+
+            {% else %}
+
+                <a href="{{ link.url }}" data-imgsrc="{{ linkImage.src | img_url: 'original'}}" class="site-image-nav__link">
+                    {{ link.title }}
+                </a>
+            {% endif %}
             <div class="site-image-nav__dropdown-menu dropdown-menu">
                 <ul class="site-image-nav__list dropdown-menu__list">
                     {% for sub_link in link.links %}
                         {% assign linkType = sub_link.type %}
                         {% case linkType %}
                             {% when 'catalog_link' %}
-                                {%assign linkImage= section.settings.shop_all_image%}
+                                {% assign linkCollection = sub_link.object%}
                             {% when 'collection_link' %}
                                 {% assign linkCollection = sub_link.object%}
+                            {% when 'page_link' %}
+                                {% assign linkPage = sub_link.object%}
+                                {% assign myimage = linkPage.handle | append:'.jpeg' %}
+                                <script>console.log({{myimage | json}})</script>
+                                {%assign linkImage=myimage%}
                             {% else %}
+
                                 {% comment %} TODO page case {% endcomment %}
                         {% endcase %}
 
 
                         {% if sub_link.levels > 0 %}
                             <li aria-haspopup="true" class="site-image-nav__listItem--has-subdropdown">
-                                <a href="{{ sub_link.url }}" {% if linkCollection.image %} data-imgsrc="{{ linkCollection.image.src | collection_img_url: 'original'}}" {% endif %} class="site-image-nav__link">{{ sub_link.title | escape }}
-                                    <i aria-hidden="true" class="fa fa-caret-right fa-lg"></i>
-                                </a>
+                                {% if linkType == 'page_link' %}
+                                    <a href="{{ sub_link.url }}" data-imgsrc="{{ linkImage| file_img_url: 'original'}}" class="site-image-nav__link">
+                                        {{ link.title }}
+                                    </a>
+
+                                {% else %}
+                                    <a href="{{ sub_link.url }}" {% if linkCollection.image %} data-imgsrc="{{ linkCollection.image.src | collection_img_url: 'original'}}" {% endif %} class="site-image-nav__link">{{ sub_link.title | escape }}
+                                        <i aria-hidden="true" class="fa fa-caret-right fa-lg"></i>
+                                    </a>
+                                {% endif %}
+
                                 <ul class="site-image-nav__subdropdown">
                                     {% for sub_sub_link in sub_link.links %}
+
+                                        {% assign linkType = sub_sub_link.type %}
+                                        <script>console.log({{sub_sub_link.handle|json}})</script>
+                                        {% case linkType %}
+                                            {% when 'catalog_link' %}
+                                                {% assign linkCollection = sub_sub_link.object%}
+                                            {% when 'collection_link' %}
+                                                {% assign linkCollection = sub_sub_link.object%}
+                                            {% when 'page_link' %}
+                                                {% assign linkPage = sub_sub_link.object%}
+                                                {% assign myimage = linkPage.handle | append:'.jpeg' %}
+                                                <script>console.log({{myimage | json}})</script>
+                                                {%assign linkImage=myimage%}
+
+                                            {% else %}
+                                                {% comment %} TODO page case {% endcomment %}
+                                        {% endcase %}
                                         <li>
-                                            <a href="{{ sub_sub_link.url }}" class="site-image-nav__link">{{sub_sub_link.title | escape }}</a>
+                                            <a href="{{ sub_sub_link.url }}" class="site-image-nav__link" {% if linkCollection.image %} data-imgsrc="{{ linkCollection.image.src | collection_img_url: 'original'}}" {% else %} data-imgsrc="{{linkCollection.products.first.images.first | img_url:'original'}} " {% endif %}>
+                                                {{sub_sub_link.title | escape }}
+                                            </a>
                                         </li>
                                     {% endfor %}
                                 </ul>
                             </li>
                         {% else %}
                             <li aria-haspopup="true" class="site-image-nav__listItem">
-                                <a href="{{ sub_link.url }}" {% if linkCollection.image %} data-imgsrc="{{ linkCollection.image.src | collection_img_url: 'original'}}" {% endif %} class="site-image-nav__link">{{ sub_link.title | escape }}
-                                    {{collection1.title}}
-                                </a>
+                                {% if linkType == 'page_link' %}
+                                    <a href="{{ sub_link.url }}" data-imgsrc="{{ linkImage| file_img_url: 'original'}}" class="site-image-nav__link">
+                                        {{ sub_link.title }}
+                                    </a>
+
+                                {% else %}
+
+                                    <a href="{{ sub_link.url }}" data-imgsrc="{{ linkCollection.image.src | img_url: 'original'}}" class="site-image-nav__link">
+                                        {{ sub_link.title }}
+                                    </a>
+                                {% endif %}
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -66,7 +123,9 @@
     {% else %}
 
         <li>
-            <a href="{{ link.url }}" class="site-image-nav__link">{{ link.title }}</a>
+            <a href="{{ link.url }}" class="site-image-nav__link">
+                {{ link.title }}
+            </a>
         </li>
 
     {% endif %}

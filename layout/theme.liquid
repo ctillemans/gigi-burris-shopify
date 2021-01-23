@@ -1,213 +1,240 @@
 <!doctype html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en"> <![endif]-->
 <!--[if IE 9 ]><html class="ie9 no-js"> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js"> <!--<![endif]-->
-<head>
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html class="no-js">
+    <!--<![endif]-->
+    <head>
 
-<link type="text/css" rel="stylesheet" href="magicscroll/magicscroll.css"/>
-<script type="text/javascript" src="magicscroll/magicscroll.js"></script>
-  <!-- Basic page needs ================================================== -->
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link href="magicscroll/magicscroll.css" rel="stylesheet" type="text/css"/>
+        <script src="magicscroll/magicscroll.js" type="text/javascript"></script>
+        <!-- Basic page needs ================================================== -->
+        <meta charset="utf-8">
+        <meta content="IE=edge" http-equiv="X-UA-Compatible">
 
-	{% if settings.favicon != blank %}
-	  <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
-	{% endif %}
+        {% if settings.favicon != blank %}
+            <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
+        {% endif %}
 
-  <!-- Title and description ================================================== -->
-  <title>
-  {{ page_title }}{% if current_tags %}{% assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags }}{% endif %}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
-  </title>
+        <!-- Title and description ================================================== -->
+        <title>
+            {{ page_title }}
+            {% if current_tags %}
+                {% assign meta_tags = current_tags | join: ', ' %}
+                &ndash;
+                {{ 'general.meta.tags' | t: tags: meta_tags }}
+            {% endif %}
+            {% if current_page != 1 %}
+                &ndash;
+                {{ 'general.meta.page' | t: page: current_page }}
+            {% endif %}
+            {% unless page_title contains shop.name %}
+                &ndash;
+                {{ shop.name }}
+            {% endunless %}
+        </title>
 
-  {% if page_description %}
-  <meta name="description" content="{{ page_description | escape }}">
-  {% endif %}
+        {% if page_description %}
+            <meta name="description" content="{{ page_description | escape }}">
+        {% endif %}
 
-  <!-- Helpers ================================================== -->
-  {% include 'social-meta-tags' %}
-  <link rel="canonical" href="{{ canonical_url }}">
-  {% if template contains 'product' %}
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-  {% else %}
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  {% endif %}
-  <meta name="theme-color" content="{{ settings.color_primary }}">
+        <!-- Helpers ================================================== -->
+        {% include 'social-meta-tags' %}
+        <link rel="canonical" href="{{ canonical_url }}">
+        {% if template contains 'product' %}
+            <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" name="viewport"/>
+        {% else %}
+            <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+        {% endif %}
+        <meta name="theme-color" content="{{ settings.color_primary }}">
 
-  <!-- CSS ================================================== -->
-  {{ 'plugins.css' | asset_url | stylesheet_tag }}
-  {{ 'timber.scss.css' | asset_url | stylesheet_tag }}
+        <!-- CSS ================================================== -->
+        {{ 'plugins.css' | asset_url | stylesheet_tag }}
+        {{ 'timber.scss.css' | asset_url | stylesheet_tag }}
 
-  {% include 'font-links' %}
+        {% include 'font-links' %}
 
-  <!-- Header hook for plugins ================================================== -->
-  {% include 'buddha-megamenu-before' %}
-  {% include 'buddha-megamenu' %}
-  {{ content_for_header }}
-  {% include 'oldIE-js' %}
+        <!-- Header hook for plugins ================================================== -->
+        {% include 'buddha-megamenu-before' %}
+        {% include 'buddha-megamenu' %}
+        {{ content_for_header }}
+        {% include 'oldIE-js' %}
 
-  {{ '//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js' | script_tag }}
-  {{ 'modernizr.min.js' | asset_url | script_tag }}
+        {{ '//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js' | script_tag }}
+        {{ 'modernizr.min.js' | asset_url | script_tag }}
 
-  {% comment %}
+        {% comment %}
     If you store has customer accounts disabled, you can remove the following JS file
   {% endcomment %}
-  {% if template contains 'customers' %}
-    {{ 'shopify_common.js' | shopify_asset_url | script_tag }}
-  {% endif %}
+        {% if template contains 'customers' %}
+            {{ 'shopify_common.js' | shopify_asset_url | script_tag }}
+        {% endif %}
 
-  {% include 'qikify-navigator' %}
-  
-{% include 'globo-megamenu-script' %} 
-{% include 'pagefly-header' %}
-  
-{% render 'pagefly-header' %}
- </head>  
+        {% include 'qikify-navigator' %}
 
-{% comment %}
+        {% include 'globo-megamenu-script' %}
+        {% include 'pagefly-header' %}
+
+        {% render 'pagefly-header' %}
+    </head>
+
+    {% comment %}
   Add the page template as a class for easy page or template specific styling.
 {% endcomment %}
-<body id="{{ page_title | handle }}" class="{% if customer %}customer-logged-in {% endif %}template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }}{% unless settings.animations_enabled %} animations-disabled{% endunless %}{% if settings.color_body_bg == settings.header-bg-color %} white--match{% endif %}" >
-  {% include 'buddha-megamenu-wireframe' %}
-  {% comment %}
+    <body id="{{ page_title | handle }}" class="{% if customer %}customer-logged-in {% endif %}template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }}{% unless settings.animations_enabled %} animations-disabled{% endunless %}{% if settings.color_body_bg == settings.header-bg-color %} white--match{% endif %}">
+        {% include 'buddha-megamenu-wireframe' %}
+        {% comment %}
   Cart Drawer might be also used by 'Quick Shop' and 'LogIn'
   {% endcomment %}
-<div id="preload">
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/COUTURE_HOVER_MENU_BUTTON.png?15405931535353319998” width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/COUTURE_MENU_BUTTON.png?15405931535353319998" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/CORE_HOVER_MENU_BUTTON.png?11463195921826423772" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/CORE_MENU_BUTTON.png?11463195921826423772" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/FALL_MENU_BUTTON.png?15405931535353319998" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/FALL_HOVER_MENU_BUTTON.png?15405931535353319998" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/MENS_MENU_BUTTON.png?11463195921826423772" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/MENS_HOVER_MENU_BUTTON.png?11463195921826423772" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/BRIDAL_MENU_BUTTON.png?15405931535353319998" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/BRIDAL_HOVER_MENU_BUTTON.png?15405931535353319998" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/DISNEY_HOVER_MENU_BUTTON.png?15405931535353319998" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/DISNEY_MENU_BUTTON.png?15405931535353319998” width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/DISNEY_HOMEPAGE_1_FINAL.png?1020125096784794153" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/DISNEY_HOMEPAGE_2_FINAL.png?1020125096784794153" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/FALL_Homepage_2_final.png?1020125096784794153" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/FALL_Homepage_1_final.png?1020125096784794153" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/core_Homepage_1_final.png?1020125096784794153" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/core_homepage_2_final.png?1020125096784794153" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/DISNEYICONHOVER.png?15154372191682173388" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/look2button.png?4565407405789951575" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/theicon2.png?17794364984757227604" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/magicmoment.png?17847720238162525202" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/tru_original.png?17847720238162525202" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/1928.png?10660744137137740013" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/pearly_girly_rollover_02fdac47-805f-45af-b45e-1cb5a931ba80.png?1937794616473017198" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/dotsbrim_rollover_copy.png?1937794616473017198" width="1" height="1" />
-<img src="https://gigi-burris.myshopify.com/collections/disney-x-gigi-burris" width="1" height="1" />
-<img src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/pearly_girly.png?1937794616473017198" width="1" height="1" />
-  </div>
-
-  <div id="CartDrawer" class="drawer drawer--right">
-    <div class="drawer__header sitewide--title-wrapper">
-      <div class="drawer__close js-drawer-close">
-        <button type="button" class="icon-fallback-text">
-          <i class="fa fa-times fa-lg" aria-hidden="true"></i>
-          <span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>
-        </button>
-      </div>
-      <div class="drawer__title h2 page--title " id="CartTitle">{{ 'cart.general.title' | t }}</div>
-      <div class="drawer__title h2 page--title hide" id="ShopNowTitle">{{ 'products.product.quick_shop' | t }}</div>
-      <div class="drawer__title h2 page--title hide" id="LogInTitle">{{ 'customer.login.title' | t }}</div>
-      <div class="drawer__title h2 page--title hide" id="SearchTitle">{{ 'general.search.title' | t }}</div>
-    </div>
-    <div id="CartContainer"></div>
-    <div id="ShopNowContainer" class="hide"></div>
-    <div id="SearchContainer" class="hide">
-      <div class="wrapper search-drawer">
-        <div class="input-group">
-          <input type="search" name="q" id="search-input" placeholder="{{ 'general.search.placeholder' | t }}" class="input-group-field" aria-label="{{ 'general.search.placeholder' | t }}" autocomplete="off" />
-          <span class="input-group-btn">
-            <button type="submit" class="btn icon-fallback-text">
-              <i class="fa fa-search"></i>
-              <span class="fallback-text">Search</span>
-            </button>
-          </span>
+        <div id="preload">
+            <img 1" />
+                                                                                                                                                                                                <img src=" 1" />
+                                                                                                                                                                                                <img src=" 1" />
+                                                                                                                                                                                                <img src=" 1" />
+                                                                                                                                                                                                <img src=" 1" />
+                                                                                                                                                                                                <img src=" 1" />
+                                                                                                                                                                                                <img src=" 1" />
+                                                                                                                                                                                                <img src=" 1" />
+                                                                                                                                                                                                <img src=" 1" />
+                                                                                                                                                                                                <img src=" 1" />
+                                                                                                                                                                                                <img src=" 1" />
+                                                                                                                                                                                                <img src=" 1" height=" 1" height=" 1" height=" 1" height=" 1" height=" 1" height=" 1" height=" 1" height=" 1" height=" 1" height=" 1" height=" height="1" https://cdn.shopify.com/s/files/1/0068/4651/3222/files/BRIDAL_HOVER_MENU_BUTTON.png?15405931535353319998" width=" https://cdn.shopify.com/s/files/1/0068/4651/3222/files/BRIDAL_MENU_BUTTON.png?15405931535353319998" width=" https://cdn.shopify.com/s/files/1/0068/4651/3222/files/CORE_HOVER_MENU_BUTTON.png?11463195921826423772" width=" https://cdn.shopify.com/s/files/1/0068/4651/3222/files/CORE_MENU_BUTTON.png?11463195921826423772" width=" https://cdn.shopify.com/s/files/1/0068/4651/3222/files/COUTURE_MENU_BUTTON.png?15405931535353319998" width=" https://cdn.shopify.com/s/files/1/0068/4651/3222/files/DISNEY_HOVER_MENU_BUTTON.png?15405931535353319998" width=" https://cdn.shopify.com/s/files/1/0068/4651/3222/files/FALL_HOVER_MENU_BUTTON.png?15405931535353319998" width=" https://cdn.shopify.com/s/files/1/0068/4651/3222/files/FALL_MENU_BUTTON.png?15405931535353319998" width=" https://cdn.shopify.com/s/files/1/0068/4651/3222/files/MENS_HOVER_MENU_BUTTON.png?11463195921826423772" width=" https://cdn.shopify.com/s/files/1/0068/4651/3222/files/MENS_MENU_BUTTON.png?11463195921826423772" width=" https://cdn.shopify.com/s/files/1/0068/4651/3222/files/disney_menu_button.png?15405931535353319998” src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/COUTURE_HOVER_MENU_BUTTON.png?15405931535353319998” width=" width="1"/>
+            <img height="1" src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/DISNEY_HOMEPAGE_1_FINAL.png?1020125096784794153" width="1"/>
+            <img height="1" src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/DISNEY_HOMEPAGE_2_FINAL.png?1020125096784794153" width="1"/>
+            <img height="1" src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/FALL_Homepage_2_final.png?1020125096784794153" width="1"/>
+            <img height="1" src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/FALL_Homepage_1_final.png?1020125096784794153" width="1"/>
+            <img height="1" src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/core_Homepage_1_final.png?1020125096784794153" width="1"/>
+            <img height="1" src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/core_homepage_2_final.png?1020125096784794153" width="1"/>
+            <img height="1" src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/DISNEYICONHOVER.png?15154372191682173388" width="1"/>
+            <img height="1" src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/look2button.png?4565407405789951575" width="1"/>
+            <img height="1" src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/theicon2.png?17794364984757227604" width="1"/>
+            <img height="1" src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/magicmoment.png?17847720238162525202" width="1"/>
+            <img height="1" src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/tru_original.png?17847720238162525202" width="1"/>
+            <img height="1" src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/1928.png?10660744137137740013" width="1"/>
+            <img height="1" src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/pearly_girly_rollover_02fdac47-805f-45af-b45e-1cb5a931ba80.png?1937794616473017198" width="1"/>
+            <img height="1" src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/dotsbrim_rollover_copy.png?1937794616473017198" width="1"/>
+            <img height="1" src="https://gigi-burris.myshopify.com/collections/disney-x-gigi-burris" width="1"/>
+            <img height="1" src="https://cdn.shopify.com/s/files/1/0068/4651/3222/files/pearly_girly.png?1937794616473017198" width="1"/>
         </div>
-        {% include 'live-search-result' %}
-        <script type="text/javascript">
-            var SearchTranslations = {
-                no_results_html: {{ 'general.search.no_results_html' | t | json }},
-                results_for_html: {{ 'general.search.results_for_html' | t | json }},
-                products: {{ 'general.search.products' | t | json }},
-                pages: {{ 'general.search.pages' | t | json }},
-                articles: {{ 'general.search.articles' | t | json }}
-            };
-        </script>
-        <div id="search-results" class="grid-uniform">
-          <!-- here will be the search results -->
+
+        <div class="drawer drawer--right" id="CartDrawer">
+            <div class="drawer__header sitewide--title-wrapper">
+                <div class="drawer__close js-drawer-close">
+                    <button class="icon-fallback-text" type="button">
+                        <i aria-hidden="true" class="fa fa-times fa-lg"></i>
+                        <span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>
+                    </button>
+                </div>
+                <div class="drawer__title h2 page--title " id="CartTitle">{{ 'cart.general.title' | t }}</div>
+                <div class="drawer__title h2 page--title hide" id="ShopNowTitle">{{ 'products.product.quick_shop' | t }}</div>
+                <div class="drawer__title h2 page--title hide" id="LogInTitle">{{ 'customer.login.title' | t }}</div>
+                <div class="drawer__title h2 page--title hide" id="SearchTitle">{{ 'general.search.title' | t }}</div>
+            </div>
+            <div id="CartContainer"></div>
+            <div class="hide" id="ShopNowContainer"></div>
+            <div class="hide" id="SearchContainer">
+                <div class="wrapper search-drawer">
+                    <div class="input-group">
+                        <input type="search" name="q" id="search-input" placeholder="{{ 'general.search.placeholder' | t }}" class="input-group-field" aria-label="{{ 'general.search.placeholder' | t }}" autocomplete="off"/>
+                        <span class="input-group-btn">
+                            <button class="btn icon-fallback-text" type="submit">
+                                <i class="fa fa-search"></i>
+                                <span class="fallback-text">Search</span>
+                            </button>
+                        </span>
+                    </div>
+                    {% include 'live-search-result' %}
+                    <script type="text/javascript">
+                        var SearchTranslations = {
+                            no_results_html: {{ 'general.search.no_results_html' | t | json }},
+                            results_for_html: {{ 'general.search.results_for_html' | t | json }},
+                            products: {{ 'general.search.products' | t | json }},
+                            pages: {{ 'general.search.pages' | t | json }},
+                            articles: {{ 'general.search.articles' | t | json }}
+                        };
+                    </script>
+                    <div class="grid-uniform" id="search-results">
+                        <!-- here will be the search results -->
+                    </div>
+                    <a class="btn hide" href="#" id="search-show-more">{{ 'collections.general.see_more' | t }}</a>
+                </div>
+            </div>
+            <div class="hide" id="LogInContainer"></div>
         </div>
-        <a id="search-show-more" href="#" class="btn hide">{{ 'collections.general.see_more' | t }}</a>
-      </div>
-    </div>
-    <div id="LogInContainer" class="hide"></div>
-  </div>
-  <div id="DrawerOverlay"></div>
+        <div id="DrawerOverlay"></div>
 
-<div id="PageContainer">
+        <div id="PageContainer">
 
-	{% section 'announcement-bar' %}
+            {% section 'announcement-bar' %}
 
-	{% section 'header' %}
+            {% section 'header' %}
 
-		{% if template == 'index' %}
+            {% if template == 'index' %}
 
-			<div class="flow-homepage">
+                <div class="flow-homepage">
 
-		{% else %}
+                {% else %}
 
-			<div class="wrapper main-content">
+                    <div class="wrapper main-content">
 
-		{% endif %}
+                    {% endif %}
 
-		{{ content_for_layout }}
+                    {{ content_for_layout }}
 
-		</div>
+                </div>
 
-	{% section 'footer' %}
+                {% section 'footer' %}
 
-</div>
+            </div>
 
-<script type="text/javascript">
-window.lazySizesConfig = window.lazySizesConfig || {};
-window.lazySizesConfig.rias = window.lazySizesConfig.rias || {};
+            <script type="text/javascript">
+                window.lazySizesConfig = window.lazySizesConfig || {};
+                window.lazySizesConfig.rias = window.lazySizesConfig.rias || {};
 
-// configure available widths to replace with the {width} placeholder
-window.lazySizesConfig.rias.widths = [150, 300, 600, 900, 1200, 1500, 1800, 2100];
-</script>
+                // configure available widths to replace with the {width} placeholder
+                window
+                    .lazySizesConfig
+                    .rias
+                    .widths = [
+                    150,
+                    300,
+                    600,
+                    900,
+                    1200,
+                    1500,
+                    1800,
+                    2100
+                ];
+            </script>
 
-  {{ 'fastclick.min.js' | asset_url | script_tag }}
-  {{ 'plugins.js' | asset_url | script_tag }}
-  {{ 'timber.js' | asset_url | script_tag }}
+            {{ 'fastclick.min.js' | asset_url | script_tag }}
+            {{ 'plugins.js' | asset_url | script_tag }}
+            {{ 'timber.js' | asset_url | script_tag }}
 
-  {% if template == 'product' %}
+            {% if template == 'product' %}
 
-  <script>
+                <script>
   document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
   </script>
 
-  {% endif %}
+            {% endif %}
 
-  {{ 'custom.js' | asset_url | script_tag }}
+            {{ 'custom.js' | asset_url | script_tag }}
 
-  {% include 'popup' %}
+            {% include 'popup' %}
 
-  {% if settings.show_multiple_currencies %}
-    {% include 'currencies' %}
-  {% else %}
-    <script type="text/javascript">
-      window.default_currency_format = {{ shop.money_format | json }};
-    </script>
-  {% endif %}
+            {% if settings.show_multiple_currencies %}
+                {% include 'currencies' %}
+            {% else %}
+                <script type="text/javascript">
+                    window.default_currency_format = {{ shop.money_format | json }};
+                </script>
+            {% endif %}
 
-  {% comment %}
+            {% comment %}
     Template-specific js
   {% endcomment %}
-  <script>
+            <script>
     {% if resetPassword %}
       $(function() {
         timber.resetPasswordSuccess();
@@ -215,16 +242,16 @@ window.lazySizesConfig.rias.widths = [150, 300, 600, 900, 1200, 1500, 1800, 2100
     {% endif %}
   </script>
 
-  {% comment %}
+            {% comment %}
     Ajaxify your cart with this plugin.
     Documentation:
       - http://shopify.com/timber#ajax-cart
   {% endcomment %}
-  {{ 'handlebars.min.js' | asset_url | script_tag }}
-  {% if settings.ajax_cart_method == "drawer" %}
-    {% include 'ajax-cart-template' %}
-    {{ 'ajax-cart.js' | asset_url | script_tag }}
-    <script>
+            {{ 'handlebars.min.js' | asset_url | script_tag }}
+            {% if settings.ajax_cart_method == "drawer" %}
+                {% include 'ajax-cart-template' %}
+                {{ 'ajax-cart.js' | asset_url | script_tag }}
+                <script>
       function init() {
         ajaxCart.init({
           formSelector: '#AddToCartForm',
@@ -242,9 +269,9 @@ window.lazySizesConfig.rias.widths = [150, 300, 600, 900, 1200, 1500, 1800, 2100
         timber.RightDrawer.open();
       });
     </script>
-  {% endif %}
-    <script type="text/javascript" src="https://sdk.qikify.com/tmenu/app-v2.js?shop={{ shop.permanent_domain }}"></script>
-    <script>
+            {% endif %}
+            <script src="https://sdk.qikify.com/tmenu/app-v2.js?shop={{ shop.permanent_domain }}" type="text/javascript"></script>
+            <script>
 jQuery(function() {
   jQuery('.swatch :radio').change(function() {
     var optionIndex = jQuery(this).closest('.swatch').attr('data-option-index');
@@ -257,7 +284,9 @@ jQuery(function() {
       .trigger('change');
   });
 });
-</script><script>window.KlarnaThemeGlobals={};{%case template.name%} {%when"product"%} window.KlarnaThemeGlobals.data_purchase_amount={{product.first_available_variant.price}};window.KlarnaThemeGlobals.productVariants={{product.variants|json}};window.KlarnaThemeGlobals.documentCopy=document.cloneNode(true);{%when"cart"%} window.KlarnaThemeGlobals.data_purchase_amount={{cart.total_price}};window.KlarnaThemeGlobals.documentCopy=document.cloneNode(true);{%endcase%}</script>
-{{ 'menuNav.js' | asset_url | script_tag }}
-</body>
+</script>
+            {{ 'menuNav.js' | asset_url | script_tag }}
+            <script>window.KlarnaThemeGlobals={};{%case template.name%} {%when"product"%} window.KlarnaThemeGlobals.data_purchase_amount={{product.first_available_variant.price}};window.KlarnaThemeGlobals.productVariants={{product.variants|json}};window.KlarnaThemeGlobals.documentCopy=document.cloneNode(true);{%when"cart"%} window.KlarnaThemeGlobals.data_purchase_amount={{cart.total_price}};window.KlarnaThemeGlobals.documentCopy=document.cloneNode(true);{%endcase%}</script>
+        </body>
+    </body>
 </html>

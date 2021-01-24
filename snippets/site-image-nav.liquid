@@ -8,7 +8,6 @@
             {% comment %} TODO: build function that returns string to assign to linkImage {% endcomment %}
 
             {% assign linkType = link.type %}
-            <script>console.log({{linkType | json}})</script>
 
             {% case linkType %}
                 {% when 'catalog_link' %}
@@ -19,7 +18,6 @@
                 {% when 'page_link' %}
                     {% assign linkPage = link.object%}
                     {% assign myimage = linkPage.handle | append:'.jpeg' %}
-                    <script>console.log({{myimage | json}})</script>
                     {%assign linkImage=myimage%}
                 {% else %}
                     {%assign linkImage= section.settings.shop_all_image.src%}
@@ -39,17 +37,32 @@
                 <ul class="site-image-nav__list dropdown-menu__list">
                     {% for sub_link in link.links %}
                         {% assign linkType = sub_link.type %}
+                        <script>console.log({{linkType | json}})</script>
                         {% case linkType %}
                             {% when 'catalog_link' %}
                                 {% assign linkCollection = sub_link.object%}
+                                {%assign linkImage=linkCollection.image.src%}
+
                             {% when 'collection_link' %}
                                 {% assign linkCollection = sub_link.object%}
-                            {% when 'page_link' %}
+                                {%assign linkImage=linkCollection.image.src%}
+
+                            {% when 'product_link' %}
+                                {% assign  productLink= sub_link.object %}
+                                <script>console.log({{productLink.featured_image.src | json}})</script>
+                                {% assign linkImage = productLink.featured_image.src %}
+                            {% when 'http_link' %}
+                                {% assign httpHandle = sub_link.handle%}
+                                {% if httpHandle == 'diary' %}
+                                    {% assign linkImage = httpHandle |append:'.jpeg' %}
+                                {% endif %}
+                                <script>console.log({{linkImage|json}})</script>
+                            {% else %}
                                 {% assign linkPage = sub_link.object%}
                                 {% assign myimage = linkPage.handle | append:'.jpeg' %}
-                                <script>console.log({{myimage | json}})</script>
-                                {%assign linkImage=myimage%}
-                            {% else %}
+                                <script>console.log({{myimage| json}})</script>
+                                {%assign linkImage=myimage %}
+
 
                                 {% comment %} TODO page case {% endcomment %}
                         {% endcase %}
@@ -57,7 +70,7 @@
 
                         {% if sub_link.levels > 0 %}
                             <li aria-haspopup="true" class="site-image-nav__listItem--has-subdropdown">
-                                {% if linkType == 'page_link' %}
+                                {% if linkType == 'page_link' or  linkType =='http_link' or  linkType =='blog_link'  %}
                                     <a href="{{ sub_link.url }}" data-imgsrc="{{ linkImage| file_img_url: 'original'}}" class="site-image-nav__link">
                                         {{ link.title }}
                                     </a>
@@ -72,16 +85,15 @@
                                     {% for sub_sub_link in sub_link.links %}
 
                                         {% assign linkType = sub_sub_link.type %}
-                                        <script>console.log({{sub_sub_link.handle|json}})</script>
                                         {% case linkType %}
                                             {% when 'catalog_link' %}
                                                 {% assign linkCollection = sub_sub_link.object%}
                                             {% when 'collection_link' %}
                                                 {% assign linkCollection = sub_sub_link.object%}
+
                                             {% when 'page_link' %}
                                                 {% assign linkPage = sub_sub_link.object%}
                                                 {% assign myimage = linkPage.handle | append:'.jpeg' %}
-                                                <script>console.log({{myimage | json}})</script>
                                                 {%assign linkImage=myimage%}
 
                                             {% else %}
@@ -97,14 +109,14 @@
                             </li>
                         {% else %}
                             <li aria-haspopup="true" class="site-image-nav__listItem">
-                                {% if linkType == 'page_link' %}
+                                {% if  linkType == 'page_link' or  linkType =='http_link' or  linkType =='blog_link' %}
                                     <a href="{{ sub_link.url }}" data-imgsrc="{{ linkImage| file_img_url: 'original'}}" class="site-image-nav__link">
                                         {{ sub_link.title }}
                                     </a>
 
                                 {% else %}
 
-                                    <a href="{{ sub_link.url }}" data-imgsrc="{{ linkCollection.image.src | img_url: 'original'}}" class="site-image-nav__link">
+                                    <a href="{{ sub_link.url }}" data-imgsrc="{{ linkImage | img_url: 'original'}}" class="site-image-nav__link">
                                         {{ sub_link.title }}
                                     </a>
                                 {% endif %}

@@ -7446,6 +7446,7 @@ input#newsletter_submit[type="submit"]{
     float: right;
   }
   display: block;
+  position: relative;
   text-decoration: none;
   padding: $gutter / 2;
   white-space: nowrap;
@@ -7456,30 +7457,57 @@ input#newsletter_submit[type="submit"]{
 
 
 
-.site-image-nav__dropdown-menu {
+.site-image-nav__dropdown-menu{
   width: 100vw;
+  height: 75vh;
   background: white;
   display: none;
   position: absolute;
   top: 71px;
-  opacity: 0;
   left: 0;
   margin: 0;
   padding-top: 1rem;
   z-index: $zindexNavDropdowns;
+
+  &.open{
+    display:block;
+    display: flex;
+    animation: slidedown 0.5s;
+
+  }
 }
+
+@keyframes slidedown {
+  from {
+    opacity: 0;
+    display: none;
+    transform: translateY(-50px);
+
+  
+  }
+  to {
+    opacity: 1;
+    display: block;
+    display: flex;
+    transform: translateY(0px);
+    
+  }
+}
+
 
 
 .site-image-nav__listItem--has-dropdown{
-  &:hover{
-    .dropdown-menu{
-      display: block;
-      display: flex;
-      opacity: 1;
-      z-index: $zindexNavDropdowns;
-    }
+
   }
-}
+  // &:hover{
+  //   .dropdown-menu{
+  //     display: block;
+  //     display: flex;
+  //     opacity: 1;
+  //     z-index: $zindexNavDropdowns;
+  //   }
+//   }
+// }
 
 .dropdown-menu__list{
   & li{
@@ -7487,8 +7515,9 @@ input#newsletter_submit[type="submit"]{
   }
   position: relative;
   display: block;
+  width: 25%;
 }
-.site-image-nav__listItem--has-subdropdown{
+.site-image-nav__listItem--has-subdropdown{ 
   position: relative;
     &:hover{
     .site-image-nav__subdropdown{
@@ -7505,6 +7534,8 @@ ul.site-image-nav__subdropdown{
   margin-left:0;
   display: none;
   opacity: 0;
+  width: 100%;
+  overflow: hidden;
   position: absolute;
   left: 100%;
   top:0;
@@ -7518,15 +7549,17 @@ ul.site-image-nav__subdropdown{
 }
 
 .site-image-nav__menu-image-container{
-width: 50%;
-background: black;
+max-width: 50%;
 position: relative;
+margin-right: 1rem;
 margin-left: auto;
 overflow: hidden;
 img{
-  max-height: 80vh;
-  width: 100%;
-  object-fit: cover;
+  height: 100%;
+  max-height: 100%;
+  object-fit:cover;
+  object-position: center;
+
 }
 }
 

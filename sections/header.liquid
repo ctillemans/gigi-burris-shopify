@@ -203,7 +203,7 @@
     {% endif %}
   {% endcapture %}
 {% comment %} Beginning of header section  {% endcomment %}
-    <header class="site-header medium--hide small--hide{% if section.settings.sticky_header %} sticky-header  ui sticky{% endif %}{% if section.settings.logo-placement == 'above' %} logo_above{% endif %}{% if section.settings.overlay_header %} overlay-header{% endif %}{% if section.settings.dropdown_alignment == 'center' %} dropdown-alignment--center{% endif %}">
+    <header class="site-header medium--hide small--hide{% if section.settings.sticky_header %} sticky-header  {% endif %}{% if section.settings.logo-placement == 'above' %} logo_above{% endif %}{% if section.settings.overlay_header %} overlay-header{% endif %}{% if section.settings.dropdown_alignment == 'center' %} dropdown-alignment--center{% endif %}">
       <div class="wrapper">
 
       {% comment %} Left Logo section  {% endcomment %}
@@ -510,117 +510,108 @@
 
 {% schema %}
 {
-  "name": "Header",
-  "settings": [
-    {
-      "type": "image_picker",
-      "id": "logo",
-      "label": "Logo image"
-    },
-    {
-      "type": "range",
-      "id": "logo_max_width",
-      "min": 100,
-      "max": 500,
-      "step": 10,
-      "unit": "px",
-      "label": "Width (in pixels)",
-      "default": 200
-    },
-    {
-      "type": "range",
-      "id": "logo_padding",
-      "min": 0,
-      "max": 100,
-      "step": 5,
-      "unit": "px",
-      "label": "Padding around logo (in pixels)",
-      "default": 10
-    },
-    {
-      "type": "link_list",
-      "id": "main_linklist",
-      "label": "Main menu",
-      "default": "main-menu"
-    },
-    {
-      "type": "checkbox",
-      "id": "sticky_header",
-      "label": "Enable 'sticky' header",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "overlay_header",
-      "label": "Overlay header over home page",
-      "default": false,
-      "info": "This will place the header directly over the home page content."
-    },
-    {
-      "type": "image_picker",
-      "id": "overlay_logo",
-      "label": "Overlay logo"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_search",
-      "label": "Enable search",
-      "default": true
-    },
-    {
-      "type": "select",
-      "id": "logo-placement",
-      "label": "Logo placement",
-      "default": "left",
-      "options": [
+    "name": "Header",
+    "settings": [
         {
-          "value": "left",
-          "label": "Left"
+            "type": "image_picker",
+            "id": "logo",
+            "label": "Logo image"
         },
         {
-          "value": "center",
-          "label": "Center"
+            "type": "range",
+            "id": "logo_max_width",
+            "min": 100,
+            "max": 500,
+            "step": 10,
+            "unit": "px",
+            "label": "Width (in pixels)",
+            "default": 200
         },
         {
-        "value": "above",
-        "label": "Above"
+            "type": "range",
+            "id": "logo_padding",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "unit": "px",
+            "label": "Padding around logo (in pixels)",
+            "default": 10
+        },
+        {
+            "type": "link_list",
+            "id": "main_linklist",
+            "label": "Main menu",
+            "default": "main-menu"
+        },
+        {
+            "type": "checkbox",
+            "id": "sticky_header",
+            "label": "Enable 'sticky' header",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "overlay_header",
+            "label": "Overlay header over home page",
+            "default": false,
+            "info": "This will place the header directly over the home page content."
+        },
+        {
+            "type": "image_picker",
+            "id": "overlay_logo",
+            "label": "Overlay logo"
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_search",
+            "label": "Enable search",
+            "default": true
+        },
+        {
+            "type": "select",
+            "id": "logo-placement",
+            "label": "Logo placement",
+            "default": "left",
+            "options": [
+                {
+                    "value": "left",
+                    "label": "Left"
+                },
+                {
+                    "value": "center",
+                    "label": "Center"
+                },
+                {
+                    "value": "above",
+                    "label": "Above"
+                }
+            ]
+        },
+        {
+            "type": "select",
+            "id": "dropdown_alignment",
+            "label": "Dropdown alignment",
+            "default": "left",
+            "options": [
+                {
+                    "value": "left",
+                    "label": "Left"
+                },
+                {
+                    "value": "center",
+                    "label": "Center"
+                },
+                {
+                    "value": "right",
+                    "label": "Right"
+                }
+            ]
+        },
+        {
+            "type": "image_picker",
+            "id": "shop_all_image",
+            "label": "Shop All Collection Nav Image"
         }
-      ]
-    },
-    {
-      "type": "select",
-      "id": "dropdown_alignment",
-      "label": "Dropdown alignment",
-      "default": "left",
-      "options": [
-        {
-          "value": "left",
-          "label": "Left"
-        },
-        {
-          "value": "center",
-          "label": "Center"
-        },
-        {
-          "value": "right",
-          "label": "Right"
-        }
-      ]
-    },
-      {
-   "type":"image_picker",
-   "id":"shop_all_image",
-   "label":"Shop All Collection Nav Image"
-}
-        
-        
-        
-  
-        
-        
-        
-        
-  ]
-        
+    ]
 }
 {% endschema %}

@@ -59,11 +59,7 @@
                                 <script>console.log({{linkImage|json}})</script>
                             {% else %}
                                 {% assign linkPage = sub_link.object%}
-                                {% assign myimage = linkPage.handle | append:'.jpeg' %}
-                                <script>console.log({{myimage| json}})</script>
-                                {%assign linkImage=myimage %}
-
-
+                                {% assign linkImage = linkPage.handle | append:'.jpeg' %}
                                 {% comment %} TODO page case {% endcomment %}
                         {% endcase %}
 
@@ -77,13 +73,11 @@
 
                                 {% else %}
                                     <a href="{{ sub_link.url }}" {% if linkCollection.image %} data-imgsrc="{{ linkCollection.image.src | collection_img_url: 'original'}}" {% endif %} class="site-image-nav__link">{{ sub_link.title | escape }}
-                                        <i aria-hidden="true" class="fa fa-caret-right fa-lg"></i>
+                                        <i aria-hidden="true" class="fa fa-caret-right fa-lg submenu-toggle-button "></i>
                                     </a>
                                 {% endif %}
-
                                 <ul class="site-image-nav__subdropdown">
                                     {% for sub_sub_link in sub_link.links %}
-
                                         {% assign linkType = sub_sub_link.type %}
                                         {% case linkType %}
                                             {% when 'catalog_link' %}
@@ -95,7 +89,6 @@
                                                 {% assign linkPage = sub_sub_link.object%}
                                                 {% assign myimage = linkPage.handle | append:'.jpeg' %}
                                                 {%assign linkImage=myimage%}
-
                                             {% else %}
                                                 {% comment %} TODO page case {% endcomment %}
                                         {% endcase %}
@@ -125,7 +118,10 @@
                     {% endfor %}
                 </ul>
                 <div class="site-image-nav__menu-image-container">
-                    <img class="site-image-nav__menu-image" src="{{ linkImage.src | img_url:"750X750" }}" data-src="{{ linkImage.url }}" data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]" data-aspectratio="{{ linkImage.aspect_ratio }}" data-sizes="auto" alt="{{ linkImage.title | escape }}">
+                    <a class="site-image-nav__image-link" href="collections/all">
+
+                        <img class="site-image-nav__menu-image" src="{{ section.settings.shop_all_image.src | img_url:"1000X1000" }}" data-src="{{ linkImage.url }}" data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]" data-aspectratio="{{ linkImage.aspect_ratio }}" data-sizes="auto" alt="{{ linkImage.title | escape }}">
+                    </a>
                     <!-- {% include 'responsive-image' with section.settings.shop_all_image, class:"menu-image" alt: "alt", props: props %} -->
                 </div>
             </div>
